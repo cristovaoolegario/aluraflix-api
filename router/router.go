@@ -6,5 +6,6 @@ func Router() *mux.Router{
 	r := mux.Router{}
 	r.HandleFunc("/api/v1/videos", GetAll).Methods("GET")
 	r.HandleFunc("/api/v1/videos/{id}", GetByID).Methods("GET")
+	r.HandleFunc("/api/v1/videos", Create).Methods("POST")
 	return &r
 }

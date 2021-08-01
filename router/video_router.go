@@ -3,6 +3,7 @@ package router
 import (
 	"encoding/json"
 	"github.com/cristovaoolegario/aluraflix-api/db"
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -45,4 +46,20 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, video)
+}
+
+func Create(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	var video dto.InsertVideo
+	err := json.NewDecoder(r.Body).Decode(&video)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	createdVideo, err := videoService.Create(video)
+	if  err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusCreated, createdVideo)
 }

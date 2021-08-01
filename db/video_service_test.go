@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
 	"testing"
 
@@ -76,4 +77,33 @@ func TestVideoService(t *testing.T) {
 		assert.Nil(t, videoResponse)
 		mt.ClearMockResponses()
 	})
+
+	mt.Run("Create method Should return object when inserted", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateSuccessResponse())
+
+		var videoService = VideoService{}
+		insertedVideo, err := videoService.Create(mocked_data.GetValidInsertVideoDto())
+
+		assert.NotNil(t, insertedVideo)
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("Create method Should return error when could not insert", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't insert data",
+		}))
+
+		var videoService = VideoService{}
+
+		insertedVideo, err := videoService.Create(dto.InsertVideo{})
+		assert.Nil(t, insertedVideo)
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
+
 }

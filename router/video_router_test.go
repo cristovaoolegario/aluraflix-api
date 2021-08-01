@@ -1,8 +1,10 @@
 package router
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/stretchr/testify/assert"
@@ -81,4 +83,54 @@ func TestGetByID_ShouldReturnVideoInBodyAndOKStatusResponse_WhenTheresItemsToSho
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, videoJson, w.Body.Bytes())
+}
+
+func TestCreate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
+	videoService = &VideoServiceMock{}
+
+	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader([]byte("")))
+	w := httptest.NewRecorder()
+
+	Create(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
+}
+
+func TestCreate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoDto := mocked_data.GetValidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+
+	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	videoServiceMockCreate = func(dto dto.InsertVideo) (*models.Video, error) {
+		return nil, errors.New("There's an error")
+	}
+
+	Create(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestCreate_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoModel := mocked_data.GetValidVideo()
+	videoDto := mocked_data.GetValidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+	videoModelJson, _ := json.Marshal(videoModel)
+
+	videoServiceMockCreate = func(dto dto.InsertVideo) (*models.Video, error) {
+		return videoModel, nil
+	}
+
+	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	Create(w, r)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, videoModelJson, w.Body.Bytes())
 }

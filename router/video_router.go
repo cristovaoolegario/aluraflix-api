@@ -3,6 +3,8 @@ package router
 import (
 	"encoding/json"
 	"github.com/cristovaoolegario/aluraflix-api/db"
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
 
@@ -32,4 +34,15 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
+}
+
+func GetByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+	video, err := videoService.GetByID(id)
+	if err != nil {
+		respondWithJson(w, http.StatusNotFound, nil)
+		return
+	}
+	respondWithJson(w, http.StatusOK, video)
 }

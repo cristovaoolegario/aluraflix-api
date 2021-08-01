@@ -12,6 +12,7 @@ var _ db.IVideoService = (*VideoServiceMock)(nil)
 var videoServiceMockGetAll func() ([]models.Video, error)
 var videoServiceMockGetById func(id primitive.ObjectID) (*models.Video, error)
 var videoServiceMockCreate func(video dto.InsertVideo) (*models.Video, error)
+var videoServiceMockUpdate func(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
 
 type VideoServiceMock struct{}
 
@@ -25,4 +26,8 @@ func (vs *VideoServiceMock) GetByID(id primitive.ObjectID) (*models.Video, error
 
 func (vs *VideoServiceMock) Create(video dto.InsertVideo) (*models.Video, error) {
 	return videoServiceMockCreate(video)
+}
+
+func (vs *VideoServiceMock) Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error) {
+	return videoServiceMockUpdate(id, newData)
 }

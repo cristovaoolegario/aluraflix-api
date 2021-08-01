@@ -63,3 +63,22 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusCreated, createdVideo)
 }
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	params := mux.Vars(r)
+	var video dto.InsertVideo
+	if err := json.NewDecoder(r.Body).Decode(&video); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	updatedVideo, err := videoService.Update(id, video)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, updatedVideo)
+}

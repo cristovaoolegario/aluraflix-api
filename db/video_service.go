@@ -6,12 +6,14 @@ import (
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IVideoService interface {
     GetAll() ([]models.Video, error)
 	GetByID(id primitive.ObjectID) (*models.Video, error)
 	Create(video dto.InsertVideo) (*models.Video, error)
+    Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
 }
 
 var _ IVideoService = (*VideoService)(nil)
@@ -46,3 +48,17 @@ func (vs *VideoService) Create(model dto.InsertVideo) (*models.Video, error) {
 	return &convertedVideo, err
 }
 
+func (vs *VideoService) Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error) {
+	var video *models.Video
+	if err := videosCollection.FindOneAndUpdate(
+		context.Background(),
+		bson.D{
+			{"_id", id},
+		},
+		bson.D{{"$set", newData}},
+		options.FindOneAndUpdate().SetReturnDocument(1),
+	).Decode(&video); err != nil {
+		return nil, err
+	}
+	return video, nil
+}

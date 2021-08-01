@@ -134,3 +134,53 @@ func TestCreate_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
 }
+
+func TestUpdate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
+	videoService = &VideoServiceMock{}
+
+	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader([]byte("")))
+	w := httptest.NewRecorder()
+
+	Update(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
+}
+
+func TestUpdate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoDto := mocked_data.GetValidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+
+	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	videoServiceMockUpdate = func(id primitive.ObjectID, dto dto.InsertVideo) (*models.Video, error) {
+		return nil, errors.New("There's an error")
+	}
+
+	Update(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestUpdate_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoModel := mocked_data.GetValidVideo()
+	videoDto := mocked_data.GetValidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+	videoModelJson, _ := json.Marshal(videoModel)
+
+	videoServiceMockUpdate = func(id primitive.ObjectID, dto dto.InsertVideo) (*models.Video, error) {
+		return videoModel, nil
+	}
+
+	r, _ := http.NewRequest("PUT", "/api/v1/videos/"+videoModel.ID.Hex(), bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	Update(w, r)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, videoModelJson, w.Body.Bytes())
+}

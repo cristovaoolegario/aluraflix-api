@@ -106,4 +106,36 @@ func TestVideoService(t *testing.T) {
 		mt.ClearMockResponses()
 	})
 
+	mt.Run("Update method Should update fields When object exists", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		id := primitive.NewObjectID()
+		videoData := mocked_data.GetValidInsertVideoDto()
+		mt.AddMockResponses(bson.D{
+			{"ok", 1},
+			{"value", mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(id))},
+		})
+
+		var videoService = VideoService{}
+		_, err := videoService.Update(id, videoData)
+
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("Update method Should return error When could not update object", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't update data",
+		}))
+		id := primitive.NewObjectID()
+
+		var videoService = VideoService{}
+
+		updateVideo, err := videoService.Update(id, dto.InsertVideo{})
+		assert.Nil(t, updateVideo)
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
 }

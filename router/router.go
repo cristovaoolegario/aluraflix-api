@@ -8,5 +8,6 @@ func Router() *mux.Router{
 	r.HandleFunc("/api/v1/videos/{id}", GetByID).Methods("GET")
 	r.HandleFunc("/api/v1/videos", Create).Methods("POST")
 	r.HandleFunc("/api/v1/videos/{id}", Update).Methods("PUT")
+	r.HandleFunc("/api/v1/videos/{id}", Delete).Methods("DELETE")
 	return &r
 }

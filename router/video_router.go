@@ -82,3 +82,13 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusOK, updatedVideo)
 }
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	if err := videoService.Delete(id); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusNoContent, nil)
+}

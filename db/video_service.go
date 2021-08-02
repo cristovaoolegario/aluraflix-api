@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,6 +15,7 @@ type IVideoService interface {
 	GetByID(id primitive.ObjectID) (*models.Video, error)
 	Create(video dto.InsertVideo) (*models.Video, error)
     Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
+	Delete(id primitive.ObjectID) error
 }
 
 var _ IVideoService = (*VideoService)(nil)
@@ -61,4 +63,12 @@ func (vs *VideoService) Update(id primitive.ObjectID, newData dto.InsertVideo) (
 		return nil, err
 	}
 	return video, nil
+}
+
+func (vs *VideoService) Delete(id primitive.ObjectID) error {
+	result, err := videosCollection.DeleteOne(context.TODO(), bson.M{"_id":id})
+	if result.DeletedCount == 0 {
+		return errors.New("no document deleted")
+	}
+	return err
 }

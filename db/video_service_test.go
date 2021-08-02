@@ -138,4 +138,22 @@ func TestVideoService(t *testing.T) {
 		assert.NotNil(t, err)
 		mt.ClearMockResponses()
 	})
+
+	mt.Run("Delete method Should delete an item When the item can be deleted", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
+		var videoService = VideoService{}
+		err := videoService.Delete(primitive.NewObjectID())
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("Delete method Should return no document deleted error When document dont exists", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
+		var videoService = VideoService{}
+		err := videoService.Delete(primitive.NewObjectID())
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
 }

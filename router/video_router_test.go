@@ -184,3 +184,35 @@ func TestUpdate_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
 }
+
+func TestDelete_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+	videoService = &VideoServiceMock{}
+
+	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)
+	w := httptest.NewRecorder()
+
+	videoServiceMockDelete = func(id primitive.ObjectID) error {
+		return errors.New("There's an error")
+	}
+
+	Delete(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestDelete_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testing.T) {
+	videoService = &VideoServiceMock{}
+
+	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)
+	w := httptest.NewRecorder()
+
+	videoServiceMockDelete = func(id primitive.ObjectID) error {
+		return nil
+	}
+
+	Delete(w, r)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+	assert.Nil(t, w.Body.Bytes())
+}

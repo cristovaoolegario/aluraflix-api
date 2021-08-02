@@ -13,6 +13,7 @@ var videoServiceMockGetAll func() ([]models.Video, error)
 var videoServiceMockGetById func(id primitive.ObjectID) (*models.Video, error)
 var videoServiceMockCreate func(video dto.InsertVideo) (*models.Video, error)
 var videoServiceMockUpdate func(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
+var videoServiceMockDelete func(id primitive.ObjectID) error
 
 type VideoServiceMock struct{}
 
@@ -30,4 +31,8 @@ func (vs *VideoServiceMock) Create(video dto.InsertVideo) (*models.Video, error)
 
 func (vs *VideoServiceMock) Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error) {
 	return videoServiceMockUpdate(id, newData)
+}
+
+func (vs *VideoServiceMock) Delete(id primitive.ObjectID) error {
+	return videoServiceMockDelete(id)
 }

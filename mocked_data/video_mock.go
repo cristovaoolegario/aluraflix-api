@@ -7,21 +7,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetValidVideo() *models.Video{
+func GetValidVideo() *models.Video {
 	return GetValidVideoWithId(primitive.NewObjectID())
 }
 
-func GetValidVideoWithId(id primitive.ObjectID) *models.Video{
+func GetValidVideoWithId(id primitive.ObjectID) *models.Video {
 	return &models.Video{
-		ID: id,
-		Titulo:  "unit test title",
+		ID:        id,
+		Titulo:    "unit test title",
 		Descricao: "unit test description",
-		Url: "www.unit-test.com",
-		Active: true,
+		Url:       "www.unit-test.com",
+		Active:    true,
 	}
 }
 
-func GetBsonFromVideo(model *models.Video) bson.D{
+func GetBsonFromVideo(model *models.Video) bson.D {
 	return bson.D{
 		{"_id", model.ID},
 		{"titulo", model.Titulo},
@@ -31,11 +31,18 @@ func GetBsonFromVideo(model *models.Video) bson.D{
 	}
 }
 
-func GetValidInsertVideoDto() dto.InsertVideo{
+func GetValidInsertVideoDto() dto.InsertVideo {
 	return dto.InsertVideo{
-		Titulo:  "unit test title",
+		Titulo:    "unit test title",
 		Descricao: "unit test description",
-		Url: "www.unit-test.com",
-		Active: true,
+		Url:       "https://www.unit-test.com",
+	}
+}
+
+func GetInvalidInsertVideoDto() dto.InsertVideo {
+	return dto.InsertVideo{
+		Titulo:    "",
+		Descricao: "unit test description",
+		Url:       "www.unit-test.com",
 	}
 }

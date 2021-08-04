@@ -11,7 +11,7 @@ import (
 
 var videoService db.IVideoService
 
-func init(){
+func init() {
 	videoService = &db.VideoService{}
 }
 
@@ -56,8 +56,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
+	if err = video.Validate(); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
 	createdVideo, err := videoService.Create(video)
-	if  err != nil {
+	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -72,7 +76,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-
+	if err := video.Validate(); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	updatedVideo, err := videoService.Update(id, video)
 

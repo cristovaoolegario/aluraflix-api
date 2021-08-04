@@ -97,6 +97,20 @@ func TestCreate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
 }
 
+func TestCreate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoDto := mocked_data.GetInvalidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+
+	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	Create(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
+}
+
 func TestCreate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoDto := mocked_data.GetValidInsertVideoDto()
@@ -145,6 +159,20 @@ func TestUpdate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
+}
+
+func TestUpdate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
+	videoService = &VideoServiceMock{}
+	videoDto := mocked_data.GetInvalidInsertVideoDto()
+	videoDtoJson, _ := json.Marshal(videoDto)
+
+	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader(videoDtoJson))
+	w := httptest.NewRecorder()
+
+	Update(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
 }
 
 func TestUpdate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {

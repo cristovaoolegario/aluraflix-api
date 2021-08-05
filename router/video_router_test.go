@@ -25,7 +25,7 @@ func TestGetAll_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheresNoItem
 	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)
 	w := httptest.NewRecorder()
 
-	GetAll(w, r)
+	GetAllVideos(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, []byte("[]"), w.Body.Bytes())
@@ -42,7 +42,7 @@ func TestGetAll_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItemsToShow
 	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)
 	w := httptest.NewRecorder()
 
-	GetAll(w, r)
+	GetAllVideos(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Error test\"}"), w.Body.Bytes())
@@ -59,7 +59,7 @@ func TestGetByID_ShouldReturnEmptyBodyAndNotFoundStatusResponse_WhenTheresNoItem
 	r, _ := http.NewRequest("GET", "/api/v1/videos/"+id, nil)
 	w := httptest.NewRecorder()
 
-	GetByID(w, r)
+	GetVideoByID(w, r)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
 	assert.Nil(t, w.Body.Bytes())
@@ -79,7 +79,7 @@ func TestGetByID_ShouldReturnVideoInBodyAndOKStatusResponse_WhenTheresItemsToSho
 	r, _ := http.NewRequest("GET", "/api/v1/videos/"+id.Hex(), nil)
 	w := httptest.NewRecorder()
 
-	GetByID(w, r)
+	GetVideoByID(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, videoJson, w.Body.Bytes())
@@ -91,7 +91,7 @@ func TestCreate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader([]byte("")))
 	w := httptest.NewRecorder()
 
-	Create(w, r)
+	CreateVideo(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
@@ -105,7 +105,7 @@ func TestCreate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVi
 	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader(videoDtoJson))
 	w := httptest.NewRecorder()
 
-	Create(w, r)
+	CreateVideo(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
@@ -123,7 +123,7 @@ func TestCreate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 		return nil, errors.New("There's an error")
 	}
 
-	Create(w, r)
+	CreateVideo(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
@@ -143,7 +143,7 @@ func TestCreate_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK
 	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader(videoDtoJson))
 	w := httptest.NewRecorder()
 
-	Create(w, r)
+	CreateVideo(w, r)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
@@ -155,7 +155,7 @@ func TestUpdate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader([]byte("")))
 	w := httptest.NewRecorder()
 
-	Update(w, r)
+	UpdateVideoByID(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
@@ -169,7 +169,7 @@ func TestUpdate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVi
 	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader(videoDtoJson))
 	w := httptest.NewRecorder()
 
-	Update(w, r)
+	UpdateVideoByID(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
@@ -187,7 +187,7 @@ func TestUpdate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 		return nil, errors.New("There's an error")
 	}
 
-	Update(w, r)
+	UpdateVideoByID(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
@@ -207,7 +207,7 @@ func TestUpdate_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
 	r, _ := http.NewRequest("PUT", "/api/v1/videos/"+videoModel.ID.Hex(), bytes.NewReader(videoDtoJson))
 	w := httptest.NewRecorder()
 
-	Update(w, r)
+	UpdateVideoByID(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
@@ -223,7 +223,7 @@ func TestDelete_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 		return errors.New("There's an error")
 	}
 
-	Delete(w, r)
+	DeleteVideoByID(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
@@ -239,7 +239,7 @@ func TestDelete_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testi
 		return nil
 	}
 
-	Delete(w, r)
+	DeleteVideoByID(w, r)
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
 	assert.Nil(t, w.Body.Bytes())

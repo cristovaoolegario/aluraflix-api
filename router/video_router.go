@@ -15,20 +15,7 @@ func init() {
 	videoService = &db.VideoService{}
 }
 
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondWithJson(w, code, map[string]string{"error": msg})
-}
-
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	if payload != nil {
-		response, _ := json.Marshal(payload)
-		w.Write(response)
-	}
-}
-
-func GetAll(w http.ResponseWriter, r *http.Request) {
+func GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	videos, err := videoService.GetAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -37,7 +24,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, videos)
 }
 
-func GetByID(w http.ResponseWriter, r *http.Request) {
+func GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
 	video, err := videoService.GetByID(id)
@@ -48,7 +35,7 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, video)
 }
 
-func Create(w http.ResponseWriter, r *http.Request) {
+func CreateVideo(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var video dto.InsertVideo
 	err := json.NewDecoder(r.Body).Decode(&video)
@@ -68,7 +55,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, createdVideo)
 }
 
-func Update(w http.ResponseWriter, r *http.Request) {
+func UpdateVideoByID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var video dto.InsertVideo
@@ -90,7 +77,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, updatedVideo)
 }
 
-func Delete(w http.ResponseWriter, r *http.Request) {
+func DeleteVideoByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	if err := videoService.Delete(id); err != nil {

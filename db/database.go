@@ -15,9 +15,11 @@ type DatabaseService struct {
 }
 
 var videosCollection *mongo.Collection
+var categoriesCollection *mongo.Collection
 
 const(
 	VideoCollection = "videos"
+	CategoriesCollection = "categories"
 )
 
 func (dbService *DatabaseService) Connect() {
@@ -33,4 +35,5 @@ func (dbService *DatabaseService) Connect() {
 	}
 	dbService.db = client.Database(dbService.Database)
 	videosCollection = dbService.db.Collection(VideoCollection)
+	categoriesCollection = dbService.db.Collection(CategoriesCollection)
 }

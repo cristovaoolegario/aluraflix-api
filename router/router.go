@@ -13,6 +13,7 @@ func Router() *mux.Router{
 	r.HandleFunc("/api/v1/videos", CreateVideo).Methods("POST")
 	r.HandleFunc("/api/v1/videos/{id}", UpdateVideoByID).Methods("PUT")
 	r.HandleFunc("/api/v1/videos/{id}", DeleteVideoByID).Methods("DELETE")
+	r.HandleFunc("/api/v1/category", GetAllCategories).Methods("GET")
 	return &r
 }
 

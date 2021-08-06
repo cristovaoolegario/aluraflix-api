@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestGetAll_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
 
 	videoService = &VideoServiceMock{}
 
@@ -31,7 +31,7 @@ func TestGetAll_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheresNoItem
 	assert.Equal(t, []byte("[]"), w.Body.Bytes())
 }
 
-func TestGetAll_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItemsToShow(t *testing.T) {
+func TestGetAllVideos_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAnError(t *testing.T) {
 
 	videoService = &VideoServiceMock{}
 
@@ -48,7 +48,7 @@ func TestGetAll_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItemsToShow
 	assert.Equal(t, []byte("{\"error\":\"Error test\"}"), w.Body.Bytes())
 }
 
-func TestGetByID_ShouldReturnEmptyBodyAndNotFoundStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+func TestGetVideoByID_ShouldReturnEmptyBodyAndNotFoundStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	videoServiceMockGetById = func(id primitive.ObjectID) (*models.Video, error) {
@@ -65,7 +65,7 @@ func TestGetByID_ShouldReturnEmptyBodyAndNotFoundStatusResponse_WhenTheresNoItem
 	assert.Nil(t, w.Body.Bytes())
 }
 
-func TestGetByID_ShouldReturnVideoInBodyAndOKStatusResponse_WhenTheresItemsToShow(t *testing.T) {
+func TestGetVideoByID_ShouldReturnVideoInBodyAndOKStatusResponse_WhenTheresItemsToShow(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	id := primitive.NewObjectID()
@@ -85,7 +85,7 @@ func TestGetByID_ShouldReturnVideoInBodyAndOKStatusResponse_WhenTheresItemsToSho
 	assert.Equal(t, videoJson, w.Body.Bytes())
 }
 
-func TestCreate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
+func TestCreateVideo_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	r, _ := http.NewRequest("POST", "/api/v1/videos", bytes.NewReader([]byte("")))
@@ -97,7 +97,7 @@ func TestCreate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
 }
 
-func TestCreate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
+func TestCreateVideo_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoDto := mocked_data.GetInvalidInsertVideoDto()
 	videoDtoJson, _ := json.Marshal(videoDto)
@@ -111,7 +111,7 @@ func TestCreate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVi
 	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
 }
 
-func TestCreate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+func TestCreateVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoDto := mocked_data.GetValidInsertVideoDto()
 	videoDtoJson, _ := json.Marshal(videoDto)
@@ -129,7 +129,7 @@ func TestCreate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
 }
 
-func TestCreate_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK(t *testing.T) {
+func TestCreateVideo_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoModel := mocked_data.GetValidVideo()
 	videoDto := mocked_data.GetValidInsertVideoDto()
@@ -149,7 +149,7 @@ func TestCreate_ShouldReturnCreatedVideoAndCreatedStatusResponse_WhenPayloadIsOK
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
 }
 
-func TestUpdate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
+func TestUpdateVideo_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	r, _ := http.NewRequest("PUT", "/api/v1/videos/1", bytes.NewReader([]byte("")))
@@ -161,7 +161,7 @@ func TestUpdate_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenP
 	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
 }
 
-func TestUpdate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
+func TestUpdateVideo_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVideo(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoDto := mocked_data.GetInvalidInsertVideoDto()
 	videoDtoJson, _ := json.Marshal(videoDto)
@@ -175,7 +175,7 @@ func TestUpdate_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInvalidVi
 	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
 }
 
-func TestUpdate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+func TestUpdateVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoDto := mocked_data.GetValidInsertVideoDto()
 	videoDtoJson, _ := json.Marshal(videoDto)
@@ -193,7 +193,7 @@ func TestUpdate_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
 }
 
-func TestUpdate_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
+func TestUpdateVideo_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
 	videoService = &VideoServiceMock{}
 	videoModel := mocked_data.GetValidVideo()
 	videoDto := mocked_data.GetValidInsertVideoDto()
@@ -213,7 +213,7 @@ func TestUpdate_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
 	assert.Equal(t, videoModelJson, w.Body.Bytes())
 }
 
-func TestDelete_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
+func TestDeleteVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)
@@ -229,7 +229,7 @@ func TestDelete_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTher
 	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
 }
 
-func TestDelete_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testing.T) {
+func TestDeleteVideo_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testing.T) {
 	videoService = &VideoServiceMock{}
 
 	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)

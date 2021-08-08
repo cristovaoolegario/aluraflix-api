@@ -98,7 +98,7 @@
 									"",
 									"    const responseJson = pm.response.json();",
 									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"    pm.expect(responseJson.error).to.equal(\"Titulo é obrigatório.\");",
+									"    pm.expect(responseJson.error).to.equal(\"Titulo is required.\");",
 									"})"
 								],
 								"type": "text/javascript"
@@ -199,7 +199,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Should return video by Id\", function(){",
+									"pm.test(\"Should return not found\", function(){",
 									"    pm.response.to.have.status(404);",
 									"    pm.response.to.not.be.withBody;",
 									"})"
@@ -362,6 +362,119 @@
 			"name": "Categories",
 			"item": [
 				{
+					"name": "Post a new Valid Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should insert a new category\", function(){",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"",
+									"    var category_id = responseJson.id",
+									"    pm.collectionVariables.set(\"category_id\", category_id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"cor\": \"cor 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid payload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should receive a 400 status and an invalid request payload message\", function(){",
+									"    pm.response.to.have.status(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"Invalid request payload\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should receive a 400 status and an error message\", function(){",
+									"    pm.response.to.have.status(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"Titulo is required.\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"\",\n    \"cor\": \"cor 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all categories",
 					"event": [
 						{
@@ -384,7 +497,72 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{host}}{{port}}/api/v1/category"
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get existing category by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return video by Id\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
+									"    pm.expect(responseJson.titulo).to.be.a('string');",
+									"    pm.expect(responseJson.titulo).to.eql('teste 1');",
+									"    pm.expect(responseJson.cor).to.be.a('string');",
+									"    pm.expect(responseJson.cor).to.eql('cor 1');",
+									"    pm.expect(responseJson.active).to.be.a('boolean');",
+									"    pm.expect(responseJson.active).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/{{category_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get non existing video by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return not found\", function(){",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
 					},
 					"response": []
 				}
@@ -423,6 +601,10 @@
 		{
 			"key": "video_id",
 			"value": "610aa14900cf9f5dcf354529"
+		},
+		{
+			"key": "category_id",
+			"value": ""
 		}
 	]
 }

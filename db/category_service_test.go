@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -78,6 +79,33 @@ func TestCategoryService(t *testing.T) {
 		mt.ClearMockResponses()
 	})
 
+	mt.Run("CreateCategory method Should return error when object could not be created", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't insert data",
+		}))
 
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.Create(dto.InsertCategory{})
+		assert.Nil(t, response)
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("CreateCategory method Should return error when object could not be created", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateSuccessResponse())
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.Create(mocked_data.GetValidInsertCategoryDto())
+
+		assert.NotNil(t, response)
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
 
 }

@@ -1,8 +1,10 @@
 package router
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/stretchr/testify/assert"
@@ -80,4 +82,65 @@ func TestGetCategoryByID_ShouldReturnCategoryInBodyAndOKStatusResponse_WhenThere
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, categoryJson, w.Body.Bytes())
+}
+
+func TestCreateCategory_ShouldReturnInvalidRequestPayloadAndBadRequestStatusResponse_WhenPayloadIsInvalid(t *testing.T) {
+	r, _ := http.NewRequest("POST", "/api/v1/categories", bytes.NewReader([]byte("")))
+	w := httptest.NewRecorder()
+
+	CreateCategory(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
+}
+
+func TestCreateCategory_ShouldReturnInvalidDataAndBadRequestStatusResponse_WhenInsertCategoryIsNotValid(t *testing.T) {
+	categoryDto := mocked_data.GetInvalidInsertCategoryDto()
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("POST", "/api/v1/categories", bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	CreateCategory(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Titulo is required.\"}"), w.Body.Bytes())
+}
+
+func TestCreateCategory_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemWithTheCreation(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	categoryDto := mocked_data.GetValidInsertCategoryDto()
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("POST", "/api/v1/categories", bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	categoryServiceMockCreate = func(insertCategory dto.InsertCategory) (*models.Category, error) {
+		return nil, errors.New("There's an error")
+	}
+
+	CreateCategory(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestCreateCategory_ShouldReturnCreatedCategoryAndCreatedStatusResponse_WhenPayloadIsOk(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	categoryModel := mocked_data.GetValidCategory()
+	categoryDto := mocked_data.GetValidInsertCategoryDto()
+	categoryModelJson, _ := json.Marshal(categoryModel)
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("POST", "/api/v1/categories", bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	categoryServiceMockCreate = func(insertCategory dto.InsertCategory) (*models.Category, error) {
+		return categoryModel, nil
+	}
+
+	CreateCategory(w, r)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, categoryModelJson, w.Body.Bytes())
 }

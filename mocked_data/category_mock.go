@@ -1,6 +1,7 @@
 package mocked_data
 
 import (
+	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,5 +26,18 @@ func GetBsonFromCategory(model *models.Category) bson.D {
 		{"titulo", model.Titulo},
 		{"cor", model.Cor},
 		{"active", model.Active},
+	}
+}
+
+func GetInvalidInsertCategoryDto() dto.InsertCategory {
+	return dto.InsertCategory{
+		Titulo: "",
+		Cor:    "blur",
+	}
+}
+func GetValidInsertCategoryDto() dto.InsertCategory {
+	return dto.InsertCategory{
+		Titulo: "unit test title",
+		Cor:    "blur",
 	}
 }

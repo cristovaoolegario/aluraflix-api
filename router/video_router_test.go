@@ -108,7 +108,7 @@ func TestCreateVideo_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInva
 	CreateVideo(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
+	assert.Equal(t, []byte("{\"error\":\"Titulo is required.\"}"), w.Body.Bytes())
 }
 
 func TestCreateVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {
@@ -172,7 +172,7 @@ func TestUpdateVideo_ShouldReturnAnErrorAndBadRequestStatusResponse_WhenIsAnInva
 	UpdateVideoByID(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, []byte("{\"error\":\"Titulo é obrigatório.\"}"), w.Body.Bytes())
+	assert.Equal(t, []byte("{\"error\":\"Titulo is required.\"}"), w.Body.Bytes())
 }
 
 func TestUpdateVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemOnVideoService(t *testing.T) {

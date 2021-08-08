@@ -30,7 +30,7 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyTitle(t *testin
 	err := videoToInsert.Validate()
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "Titulo é obrigatório.", err.Error())
+	assert.Equal(t, "Titulo is required.", err.Error())
 }
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyDescription(t *testing.T) {
@@ -43,7 +43,7 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyDescription(t *
 	err := videoToInsert.Validate()
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "Descricao é obrigatório.", err.Error())
+	assert.Equal(t, "Descricao is required.", err.Error())
 }
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyUrl(t *testing.T) {
@@ -56,7 +56,7 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyUrl(t *testing.
 	err := videoToInsert.Validate()
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "Url é obrigatório.", err.Error())
+	assert.Equal(t, "Url is required.", err.Error())
 }
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnInvalidUrl(t *testing.T) {

@@ -39,6 +39,3 @@ func (video *InsertVideo) Validate() error {
 	return nil
 }
 
-func MissingFieldError(missingField string) error {
-	return errors.New(missingField + " é obrigatório.")
-}

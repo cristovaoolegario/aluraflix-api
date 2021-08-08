@@ -6,18 +6,25 @@ import (
 	"net/http"
 )
 
-func Router() *mux.Router{
+func Router() *mux.Router {
 	r := mux.Router{}
+	addVideosResources(&r)
+	addCategoriesResources(&r)
+	return &r
+}
+
+func addVideosResources(r *mux.Router) {
 	r.HandleFunc("/api/v1/videos", GetAllVideos).Methods("GET")
 	r.HandleFunc("/api/v1/videos/{id}", GetVideoByID).Methods("GET")
 	r.HandleFunc("/api/v1/videos", CreateVideo).Methods("POST")
 	r.HandleFunc("/api/v1/videos/{id}", UpdateVideoByID).Methods("PUT")
 	r.HandleFunc("/api/v1/videos/{id}", DeleteVideoByID).Methods("DELETE")
+}
+
+func addCategoriesResources(r *mux.Router) {
 	r.HandleFunc("/api/v1/categories", GetAllCategories).Methods("GET")
 	r.HandleFunc("/api/v1/categories/{id}", GetCategoryByID).Methods("GET")
 	r.HandleFunc("/api/v1/categories", CreateCategory).Methods("POST")
-
-	return &r
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {

@@ -12,6 +12,7 @@ var _ db.ICategoryService = (*CategoryServiceMock)(nil)
 var categoryServiceMockGetAll func() ([]models.Category, error)
 var categoryServiceMockGetByID func(id primitive.ObjectID) (*models.Category, error)
 var categoryServiceMockCreate func(insertCategory dto.InsertCategory) (*models.Category, error)
+var categoryServiceMockUpdate func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error)
 
 type CategoryServiceMock struct {}
 
@@ -25,4 +26,8 @@ func (cs *CategoryServiceMock) GetAll() ([]models.Category, error){
 
 func (cs *CategoryServiceMock) Create(insertCategory dto.InsertCategory) (*models.Category, error) {
 	return categoryServiceMockCreate(insertCategory)
+}
+
+func (cs *CategoryServiceMock) Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error) {
+	return categoryServiceMockUpdate(id, newData)
 }

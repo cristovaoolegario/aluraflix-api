@@ -6,12 +6,14 @@ import (
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ICategoryService interface {
 	GetAll() ([]models.Category, error)
 	GetById(id primitive.ObjectID) (*models.Category, error)
 	Create(insertCategory dto.InsertCategory) (*models.Category, error)
+	Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error)
 }
 
 var _ ICategoryService = (*CategoryService)(nil)
@@ -44,4 +46,19 @@ func (cs *CategoryService) Create(insertCategory dto.InsertCategory) (*models.Ca
 		return nil, err
 	}
 	return &convertedCategory, nil
+}
+
+func (cs *CategoryService) Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error) {
+	var category *models.Category
+	if err := categoriesCollection.FindOneAndUpdate(
+		context.Background(),
+		bson.D{
+			{"_id", id},
+		},
+		bson.D{{"$set", newData}},
+		options.FindOneAndUpdate().SetReturnDocument(1),
+	).Decode(&category); err != nil {
+		return nil, err
+	}
+	return category, nil
 }

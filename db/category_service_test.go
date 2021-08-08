@@ -108,4 +108,39 @@ func TestCategoryService(t *testing.T) {
 		mt.ClearMockResponses()
 	})
 
+	mt.Run("UpdateCategory method Should return error When could not update object", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't update data",
+		}))
+		id := primitive.NewObjectID()
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.Update(id, dto.InsertCategory{})
+
+		assert.Nil(t, response)
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("UpdateCategory method Should update fields When object exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		id := primitive.NewObjectID()
+		categoryData := mocked_data.GetValidInsertCategoryDto()
+		mt.AddMockResponses(bson.D{
+			{"ok", 1},
+			{"value", mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(id))},
+		})
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.Update(id, categoryData)
+
+		assert.NotNil(t, response)
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
 }

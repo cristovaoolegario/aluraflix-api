@@ -144,3 +144,64 @@ func TestCreateCategory_ShouldReturnCreatedCategoryAndCreatedStatusResponse_When
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, categoryModelJson, w.Body.Bytes())
 }
+
+func TestUpdateCategoryByID_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenIsAnInvalidPayload(t *testing.T) {
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader([]byte("")))
+	w := httptest.NewRecorder()
+
+	UpdateCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Invalid request payload\"}"), w.Body.Bytes())
+}
+
+func TestUpdateCategoryByID_ShouldReturnErrorAndBadRequestStatusResponse_WhenIsAnInvalidCategory(t *testing.T) {
+	categoryDto := mocked_data.GetInvalidInsertCategoryDto()
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	UpdateCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Titulo is required.\"}"), w.Body.Bytes())
+}
+
+func TestUpdateCategoryByID_ShoudlReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemWithTheService(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	categoryDto := mocked_data.GetValidCategory()
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error){
+		return nil, errors.New("There's an error")
+	}
+
+	UpdateCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestUpdateCategoryByID_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	categoryModel := mocked_data.GetValidCategory()
+	categoryModelJson, _ := json.Marshal(categoryModel)
+	categoryDto := mocked_data.GetValidCategory()
+	categoryDtoJson, _ := json.Marshal(categoryDto)
+
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	w := httptest.NewRecorder()
+
+	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error){
+		return categoryModel, nil
+	}
+
+	UpdateCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, categoryModelJson, w.Body.Bytes())
+}

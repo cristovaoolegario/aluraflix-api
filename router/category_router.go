@@ -55,3 +55,26 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, insertedVideo)
 }
 
+func UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	params := mux.Vars(r)
+	var category dto.InsertCategory
+	err := json.NewDecoder(r.Body).Decode(&category)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if err := category.Validate(); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	updatedCategory, err := categoryService.Update(id, category)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, updatedCategory)
+}
+

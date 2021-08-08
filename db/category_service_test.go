@@ -48,4 +48,36 @@ func TestCategoryService(t *testing.T) {
 		mt.ClearMockResponses()
 	})
 
+	mt.Run("GetCategoryById method Should return error when object dont exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		id := primitive.NewObjectID()
+
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(bson.D{}, killCursors)
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.GetById(id)
+		assert.NotNil(t, err)
+		assert.Nil(t, response)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetCategoryById method Should return object when object exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		id := primitive.NewObjectID()
+		expectedCategory := mocked_data.GetValidCategoryWithId(id)
+
+		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.GetById(id)
+		assert.Nil(t, err)
+		assert.Equal(t, expectedCategory, response)
+		mt.ClearMockResponses()
+	})
+
+
+
 }

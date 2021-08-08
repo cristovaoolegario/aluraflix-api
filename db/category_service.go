@@ -4,10 +4,12 @@ import (
 	"context"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ICategoryService interface {
 	GetAll() ([]models.Category, error)
+	GetById(id primitive.ObjectID) (*models.Category, error)
 }
 
 var _ ICategoryService = (*CategoryService)(nil)
@@ -23,4 +25,12 @@ func (cs *CategoryService) GetAll() ([]models.Category, error) {
 	}
 	_ = cursor.All(context.TODO(), &Categories)
 	return Categories, err
+}
+
+func (cs *CategoryService) GetById(id primitive.ObjectID) (*models.Category, error) {
+	category := models.Category{}
+	if err := categoriesCollection.FindOne(context.TODO() ,bson.M{"_id":id}).Decode(&category); err != nil{
+		return nil, err
+	}
+	return &category, nil
 }

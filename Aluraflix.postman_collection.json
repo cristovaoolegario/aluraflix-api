@@ -275,7 +275,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Should update video by Id\", function(){",
+									"pm.test(\"Should not update video by Id\", function(){",
 									"    pm.response.to.have.status(500);",
 									"    pm.response.to.be.withBody;",
 									"    pm.response.to.be.json;",
@@ -561,6 +561,136 @@
 					],
 					"request": {
 						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should update category by Id\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
+									"    pm.expect(responseJson.titulo).to.be.a('string');",
+									"    pm.expect(responseJson.titulo).to.eql('teste 2');",
+									"    pm.expect(responseJson.cor).to.be.a('string');",
+									"    pm.expect(responseJson.cor).to.eql('cor 2');",
+									"    pm.expect(responseJson.active).to.be.a('boolean');",
+									"    pm.expect(responseJson.active).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 2\",\n    \"cor\": \"cor 2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories/{{category_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update non existing category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should not update category by Id\", function(){",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"mongo: no documents in result\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"cor\": \"cor 4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should delete category by Id\", function(){",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/{{category_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete non existing Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should not delete non existing category by Id\", function(){",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"no document deleted\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
 						"header": [],
 						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
 					},

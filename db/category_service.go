@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,6 +15,7 @@ type ICategoryService interface {
 	GetById(id primitive.ObjectID) (*models.Category, error)
 	Create(insertCategory dto.InsertCategory) (*models.Category, error)
 	Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error)
+	Delete(id primitive.ObjectID) error
 }
 
 var _ ICategoryService = (*CategoryService)(nil)
@@ -61,4 +63,12 @@ func (cs *CategoryService) Update(id primitive.ObjectID, newData dto.InsertCateg
 		return nil, err
 	}
 	return category, nil
+}
+
+func (cs *CategoryService) Delete(id primitive.ObjectID) error {
+	result, err := categoriesCollection.DeleteOne(context.TODO(), bson.M{"_id":id})
+	if result.DeletedCount == 0 {
+		return errors.New("no document deleted")
+	}
+	return err
 }

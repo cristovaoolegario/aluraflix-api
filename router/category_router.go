@@ -78,3 +78,13 @@ func UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, updatedCategory)
 }
 
+func DeleteCategoryByID(w http.ResponseWriter, r *http.Request){
+	params := mux.Vars(r)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	if err := categoryService.Delete(id); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusNoContent, nil)
+}
+

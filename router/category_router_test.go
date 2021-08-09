@@ -168,7 +168,7 @@ func TestUpdateCategoryByID_ShouldReturnErrorAndBadRequestStatusResponse_WhenIsA
 	assert.Equal(t, []byte("{\"error\":\"Titulo is required.\"}"), w.Body.Bytes())
 }
 
-func TestUpdateCategoryByID_ShoudlReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemWithTheService(t *testing.T) {
+func TestUpdateCategoryByID_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemWithTheService(t *testing.T) {
 	categoryService = &CategoryServiceMock{}
 	categoryDto := mocked_data.GetValidCategory()
 	categoryDtoJson, _ := json.Marshal(categoryDto)
@@ -204,4 +204,36 @@ func TestUpdateCategoryByID_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *test
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, categoryModelJson, w.Body.Bytes())
+}
+
+func TestDeleteCategoryByID_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemDeletingTheObject(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+
+	r, _ := http.NewRequest("DELETE", "/api/v1/categories/" + primitive.NewObjectID().Hex(), nil)
+	w := httptest.NewRecorder()
+
+	categoryServiceMockDelete = func(id primitive.ObjectID) error {
+		return errors.New("There's an error")
+	}
+
+	DeleteCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"There's an error\"}"), w.Body.Bytes())
+}
+
+func TestDeleteCategoryByID_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	r, _ := http.NewRequest("DELETE", "/api/v1/categories/" + primitive.NewObjectID().Hex(), nil)
+	w := httptest.NewRecorder()
+
+	categoryServiceMockDelete = func(id primitive.ObjectID) error {
+		return nil
+	}
+
+	DeleteCategoryByID(w, r)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+	assert.Nil(t, w.Body.Bytes())
+
 }

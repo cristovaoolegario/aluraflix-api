@@ -143,4 +143,22 @@ func TestCategoryService(t *testing.T) {
 		assert.Nil(t, err)
 		mt.ClearMockResponses()
 	})
+
+	mt.Run("DeleteCategory method Should delete an item When the item can be deleted", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
+		var categoryService = CategoryService{}
+		err := categoryService.Delete(primitive.NewObjectID())
+		assert.Nil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("DeleteCategory method Should return no document deleted error When document dont exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
+		var categoryService = CategoryService{}
+		err := categoryService.Delete(primitive.NewObjectID())
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
 }

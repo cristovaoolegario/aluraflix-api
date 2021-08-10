@@ -16,6 +16,7 @@ type ICategoryService interface {
 	Create(insertCategory dto.InsertCategory) (*models.Category, error)
 	Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error)
 	Delete(id primitive.ObjectID) error
+	GetVideosByCategoryId(id primitive.ObjectID) ([]models.Video, error)
 }
 
 var _ ICategoryService = (*CategoryService)(nil)
@@ -71,4 +72,15 @@ func (cs *CategoryService) Delete(id primitive.ObjectID) error {
 		return errors.New("no document deleted")
 	}
 	return err
+}
+
+func (cs *CategoryService) GetVideosByCategoryId(id primitive.ObjectID) ([]models.Video, error) {
+	var videos []models.Video
+	cursor, err := videosCollection.Find(context.TODO(), bson.M{"category_id": id})
+	if err != nil {
+		return nil, err
+	}
+	_ = cursor.All(context.TODO(), &videos)
+
+	return videos, err
 }

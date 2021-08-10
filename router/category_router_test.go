@@ -14,12 +14,13 @@ import (
 	"testing"
 )
 
-func TestGetAllCategories_ShouldReturnEmptyCategoryArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
-
+func TestGetAllCategories_ShouldReturnCategoryArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
 	categoryService = &CategoryServiceMock{}
+	categoryArray := []models.Category{*mocked_data.GetValidCategory()}
+	categoryArrayJson, _ := json.Marshal(categoryArray)
 
 	categoryServiceMockGetAll = func() ([]models.Category, error) {
-		return []models.Category{}, nil
+		return categoryArray, nil
 	}
 
 	r, _ := http.NewRequest("GET", "/api/v1/category", nil)
@@ -28,7 +29,7 @@ func TestGetAllCategories_ShouldReturnEmptyCategoryArrayAndOKStatusResponse_When
 	GetAllCategories(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, []byte("[]"), w.Body.Bytes())
+	assert.Equal(t, categoryArrayJson, w.Body.Bytes())
 }
 
 func TestGetAllCategories_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAnError(t *testing.T) {
@@ -36,7 +37,7 @@ func TestGetAllCategories_ShouldReturnErrorAndInternalServerErrorStatusResponse_
 	categoryService = &CategoryServiceMock{}
 
 	categoryServiceMockGetAll = func() ([]models.Category, error) {
-		return []models.Category{}, errors.New("Error test")
+		return nil, errors.New("Error test")
 	}
 
 	r, _ := http.NewRequest("GET", "/api/v1/category", nil)
@@ -46,6 +47,23 @@ func TestGetAllCategories_ShouldReturnErrorAndInternalServerErrorStatusResponse_
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, []byte("{\"error\":\"Error test\"}"), w.Body.Bytes())
+}
+
+func TestGetAllCategories_ShouldReturnEmptyArrayAndNotFoundStatusResponse_WhenTheresAnError(t *testing.T) {
+
+	categoryService = &CategoryServiceMock{}
+
+	categoryServiceMockGetAll = func() ([]models.Category, error) {
+		return nil, nil
+	}
+
+	r, _ := http.NewRequest("GET", "/api/v1/category", nil)
+	w := httptest.NewRecorder()
+
+	GetAllCategories(w, r)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, []byte("[]"), w.Body.Bytes())
 }
 
 func TestGetCategoryByID_ShouldReturnEmptyCategoryAnd404StatusResponse_WhenTheresIsNoCategoryWithThatId(t *testing.T) {
@@ -146,7 +164,7 @@ func TestCreateCategory_ShouldReturnCreatedCategoryAndCreatedStatusResponse_When
 }
 
 func TestUpdateCategoryByID_ShouldReturnInvalidPayloadErrorAndBadRequestStatusResponse_WhenIsAnInvalidPayload(t *testing.T) {
-	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader([]byte("")))
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+primitive.NewObjectID().Hex(), bytes.NewReader([]byte("")))
 	w := httptest.NewRecorder()
 
 	UpdateCategoryByID(w, r)
@@ -159,7 +177,7 @@ func TestUpdateCategoryByID_ShouldReturnErrorAndBadRequestStatusResponse_WhenIsA
 	categoryDto := mocked_data.GetInvalidInsertCategoryDto()
 	categoryDtoJson, _ := json.Marshal(categoryDto)
 
-	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
 	w := httptest.NewRecorder()
 
 	UpdateCategoryByID(w, r)
@@ -173,10 +191,10 @@ func TestUpdateCategoryByID_ShouldReturnErrorAndInternalServerErrorStatusRespons
 	categoryDto := mocked_data.GetValidCategory()
 	categoryDtoJson, _ := json.Marshal(categoryDto)
 
-	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
 	w := httptest.NewRecorder()
 
-	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error){
+	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error) {
 		return nil, errors.New("There's an error")
 	}
 
@@ -193,10 +211,10 @@ func TestUpdateCategoryByID_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *test
 	categoryDto := mocked_data.GetValidCategory()
 	categoryDtoJson, _ := json.Marshal(categoryDto)
 
-	r, _ := http.NewRequest("PUT", "/api/v1/categories"+ primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
+	r, _ := http.NewRequest("PUT", "/api/v1/categories"+primitive.NewObjectID().Hex(), bytes.NewReader(categoryDtoJson))
 	w := httptest.NewRecorder()
 
-	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error){
+	categoryServiceMockUpdate = func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error) {
 		return categoryModel, nil
 	}
 
@@ -209,7 +227,7 @@ func TestUpdateCategoryByID_ShouldReturnOKStatusResponse_WhenPayloadIsOK(t *test
 func TestDeleteCategoryByID_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAProblemDeletingTheObject(t *testing.T) {
 	categoryService = &CategoryServiceMock{}
 
-	r, _ := http.NewRequest("DELETE", "/api/v1/categories/" + primitive.NewObjectID().Hex(), nil)
+	r, _ := http.NewRequest("DELETE", "/api/v1/categories/"+primitive.NewObjectID().Hex(), nil)
 	w := httptest.NewRecorder()
 
 	categoryServiceMockDelete = func(id primitive.ObjectID) error {
@@ -224,7 +242,7 @@ func TestDeleteCategoryByID_ShouldReturnErrorAndInternalServerErrorStatusRespons
 
 func TestDeleteCategoryByID_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *testing.T) {
 	categoryService = &CategoryServiceMock{}
-	r, _ := http.NewRequest("DELETE", "/api/v1/categories/" + primitive.NewObjectID().Hex(), nil)
+	r, _ := http.NewRequest("DELETE", "/api/v1/categories/"+primitive.NewObjectID().Hex(), nil)
 	w := httptest.NewRecorder()
 
 	categoryServiceMockDelete = func(id primitive.ObjectID) error {
@@ -236,4 +254,54 @@ func TestDeleteCategoryByID_ShouldReturnNoContentResponse_WhenTheItemCouldBeDele
 	assert.Equal(t, http.StatusNoContent, w.Code)
 	assert.Nil(t, w.Body.Bytes())
 
+}
+
+func TestGetAllVideosByCategoryID_ShouldReturnEmptyVideoArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+	videosArray := []models.Video{*mocked_data.GetValidVideo()}
+	videosArrayJson, _ := json.Marshal(videosArray)
+
+	categoryServiceMockGetVideosByCategoryId = func(id primitive.ObjectID) ([]models.Video, error) {
+		return videosArray, nil
+	}
+
+	r, _ := http.NewRequest("GET", "/api/v1/category/"+primitive.NewObjectID().Hex()+"/videos", nil)
+	w := httptest.NewRecorder()
+
+	GetAllVideosByCategoryID(w, r)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, videosArrayJson, w.Body.Bytes())
+}
+
+func TestGetAllVideosByCategoryID_ShouldReturnEmptyArrayAndNotFoundStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+
+	categoryServiceMockGetVideosByCategoryId = func(id primitive.ObjectID) ([]models.Video, error) {
+		return nil, nil
+	}
+
+	r, _ := http.NewRequest("GET", "/api/v1/category/"+primitive.NewObjectID().Hex()+"/videos", nil)
+	w := httptest.NewRecorder()
+
+	GetAllVideosByCategoryID(w, r)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, []byte("[]"), w.Body.Bytes())
+}
+
+func TestGetAllVideosByCategoryID_ShouldReturnErrorAndInternalServerErrorStatusResponse_WhenTheresAnError(t *testing.T) {
+	categoryService = &CategoryServiceMock{}
+
+	categoryServiceMockGetVideosByCategoryId = func(id primitive.ObjectID) ([]models.Video, error) {
+		return nil, errors.New("Error test")
+	}
+
+	r, _ := http.NewRequest("GET", "/api/v1/category/"+primitive.NewObjectID().Hex()+"/videos", nil)
+	w := httptest.NewRecorder()
+
+	GetAllVideosByCategoryID(w, r)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, []byte("{\"error\":\"Error test\"}"), w.Body.Bytes())
 }

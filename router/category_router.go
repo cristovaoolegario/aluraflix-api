@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/cristovaoolegario/aluraflix-api/db"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
+	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -19,6 +20,10 @@ func GetAllCategories(w http.ResponseWriter, r *http.Request) {
 	categories, err := categoryService.GetAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if categories == nil {
+		respondWithJson(w, http.StatusNotFound, []models.Video{})
 		return
 	}
 	respondWithJson(w, http.StatusOK, categories)
@@ -86,5 +91,20 @@ func DeleteCategoryByID(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	respondWithJson(w, http.StatusNoContent, nil)
+}
+
+func GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request){
+	params := mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+	videos, err := categoryService.GetVideosByCategoryId(id)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if videos == nil {
+		respondWithJson(w, http.StatusNotFound, []models.Video{})
+		return
+	}
+	respondWithJson(w, http.StatusOK, videos)
 }
 

@@ -14,6 +14,7 @@ var categoryServiceMockGetByID func(id primitive.ObjectID) (*models.Category, er
 var categoryServiceMockCreate func(insertCategory dto.InsertCategory) (*models.Category, error)
 var categoryServiceMockUpdate func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error)
 var categoryServiceMockDelete func(id primitive.ObjectID) error
+var categoryServiceMockGetVideosByCategoryId func(id primitive.ObjectID) ([]models.Video, error)
 
 type CategoryServiceMock struct {}
 
@@ -35,4 +36,8 @@ func (cs *CategoryServiceMock) Update(id primitive.ObjectID, newData dto.InsertC
 
 func (cs *CategoryServiceMock) Delete(id primitive.ObjectID) error {
 	return categoryServiceMockDelete(id)
+}
+
+func (cs *CategoryServiceMock) GetVideosByCategoryId(id primitive.ObjectID) ([]models.Video, error) {
+	return categoryServiceMockGetVideosByCategoryId(id)
 }

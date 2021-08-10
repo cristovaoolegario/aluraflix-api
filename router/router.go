@@ -24,6 +24,7 @@ func addVideosResources(r *mux.Router) {
 func addCategoriesResources(r *mux.Router) {
 	r.HandleFunc("/api/v1/categories", GetAllCategories).Methods("GET")
 	r.HandleFunc("/api/v1/categories/{id}", GetCategoryByID).Methods("GET")
+	r.HandleFunc("/api/v1/categories/{id}/videos", GetAllVideosByCategoryID).Methods("GET")
 	r.HandleFunc("/api/v1/categories", CreateCategory).Methods("POST")
 	r.HandleFunc("/api/v1/categories/{id}", UpdateCategoryByID).Methods("PUT")
 	r.HandleFunc("/api/v1/categories/{id}", DeleteCategoryByID).Methods("DELETE")

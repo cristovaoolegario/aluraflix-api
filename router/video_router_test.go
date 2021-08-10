@@ -14,12 +14,14 @@ import (
 	"testing"
 )
 
-func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+func TestGetAllVideos_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItemsToShow(t *testing.T) {
 
+	videoArray := []models.Video{*mocked_data.GetValidVideo()}
+	videoArrayJson, _ := json.Marshal(videoArray)
 	videoService = &VideoServiceMock{}
 
 	videoServiceMockGetAll = func() ([]models.Video, error) {
-		return []models.Video{}, nil
+		return videoArray, nil
 	}
 
 	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)
@@ -28,6 +30,23 @@ func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndOKStatusResponse_WhenTheres
 	GetAllVideos(w, r)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, videoArrayJson, w.Body.Bytes())
+}
+
+func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndNotFoundStatusResponse_WhenTheresNoItemsToShow(t *testing.T) {
+
+	videoService = &VideoServiceMock{}
+
+	videoServiceMockGetAll = func() ([]models.Video, error) {
+		return nil, nil
+	}
+
+	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)
+	w := httptest.NewRecorder()
+
+	GetAllVideos(w, r)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
 	assert.Equal(t, []byte("[]"), w.Body.Bytes())
 }
 
@@ -36,7 +55,7 @@ func TestGetAllVideos_ShouldReturnErrorAndInternalServerErrorStatusResponse_When
 	videoService = &VideoServiceMock{}
 
 	videoServiceMockGetAll = func() ([]models.Video, error) {
-		return []models.Video{}, errors.New("Error test")
+		return nil, errors.New("Error test")
 	}
 
 	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)

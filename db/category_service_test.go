@@ -161,4 +161,38 @@ func TestCategoryService(t *testing.T) {
 		assert.NotNil(t, err)
 		mt.ClearMockResponses()
 	})
+
+	mt.Run("GetVideosByCategoryId method Should return object when has objects", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		firstId := primitive.NewObjectID()
+		secondId := primitive.NewObjectID()
+
+		firstCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
+
+		secondCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
+
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(firstCategory, secondCategory, killCursors)
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.GetVideosByCategoryId(primitive.ObjectID{})
+		assert.Nil(t, err)
+		assert.Equal(t, 2, len(response))
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetVideosByCategoryId method Should return error when dont has objects", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(bson.D{}, killCursors)
+
+		var categoryService = CategoryService{}
+
+		response, err := categoryService.GetVideosByCategoryId(primitive.ObjectID{})
+		assert.NotNil(t, err)
+		assert.Equal(t, 0, len(response))
+		mt.ClearMockResponses()
+	})
 }

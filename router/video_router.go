@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/cristovaoolegario/aluraflix-api/db"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
+	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -19,6 +20,10 @@ func GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	videos, err := videoService.GetAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if videos == nil {
+		respondWithJson(w, http.StatusNotFound, []models.Video{})
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)

@@ -79,8 +79,15 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return object when inserted", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
 		videosCollection = mt.Coll
-		mt.AddMockResponses(mtest.CreateSuccessResponse())
+		id := primitive.NewObjectID()
+		expectedCategory := mocked_data.GetValidCategoryWithId(id)
+
+		firstResponse := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory))
+		secondResponse := mtest.CreateSuccessResponse()
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(firstResponse,secondResponse, killCursors)
 
 		var videoService = VideoService{}
 		insertedVideo, err := videoService.Create(mocked_data.GetValidInsertVideoDto())
@@ -91,12 +98,32 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return error when could not insert", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		id := primitive.NewObjectID()
+		expectedCategory := mocked_data.GetValidCategoryWithId(id)
+
+		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
+
 		videosCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
 			Message: "Con't insert data",
 		}))
+
+		var videoService = VideoService{}
+
+		insertedVideo, err := videoService.Create(dto.InsertVideo{})
+		assert.Nil(t, insertedVideo)
+		assert.NotNil(t, err)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("CreateVideo method Should return error when category dont exist", func(mt *mtest.T) {
+
+		categoriesCollection = mt.Coll
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(bson.D{}, killCursors)
 
 		var videoService = VideoService{}
 

@@ -6,359 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "Videos",
-			"item": [
-				{
-					"name": "Post new valid video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should insert a new video\", function(){",
-									"    pm.response.to.have.status(201);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"",
-									"    var video_id = responseJson.id",
-									"    pm.collectionVariables.set(\"video_id\", video_id);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{host}}{{port}}/api/v1/videos"
-					},
-					"response": []
-				},
-				{
-					"name": "Post invalid payload",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should receive a 400 status and an invalid request payload message\", function(){",
-									"    pm.response.to.have.status(400);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"    pm.expect(responseJson.error).to.equal(\"Invalid request payload\");",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{host}}{{port}}/api/v1/videos"
-					},
-					"response": []
-				},
-				{
-					"name": "Post invalid video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should receive a 400 status and an error message\", function(){",
-									"    pm.response.to.have.status(400);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"    pm.expect(responseJson.error).to.equal(\"Titulo is required.\");",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{host}}{{port}}/api/v1/videos"
-					},
-					"response": []
-				},
-				{
-					"name": "Get all videos",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should return all videos\", function(){",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"array\");",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{host}}{{port}}/api/v1/videos"
-					},
-					"response": []
-				},
-				{
-					"name": "Get existing video by Id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should return video by Id\", function(){",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
-									"    pm.expect(responseJson.titulo).to.be.a('string');",
-									"    pm.expect(responseJson.titulo).to.eql('teste 1');",
-									"    pm.expect(responseJson.descricao).to.be.a('string');",
-									"    pm.expect(responseJson.descricao).to.eql('teste de descricao 1');",
-									"    pm.expect(responseJson.url).to.be.a('string');",
-									"    pm.expect(responseJson.url).to.eql('http://www.aluralflix.com');",
-									"    pm.expect(responseJson.active).to.be.a('boolean');",
-									"    pm.expect(responseJson.active).to.eql(true);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
-					},
-					"response": []
-				},
-				{
-					"name": "Get non existing video by Id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should return not found\", function(){",
-									"    pm.response.to.have.status(404);",
-									"    pm.response.to.not.be.withBody;",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
-					},
-					"response": []
-				},
-				{
-					"name": "Update existing video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should update video by Id\", function(){",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
-									"    pm.expect(responseJson.titulo).to.be.a('string');",
-									"    pm.expect(responseJson.titulo).to.eql('teste 4');",
-									"    pm.expect(responseJson.descricao).to.be.a('string');",
-									"    pm.expect(responseJson.descricao).to.eql('teste de descricao 4');",
-									"    pm.expect(responseJson.url).to.be.a('string');",
-									"    pm.expect(responseJson.url).to.eql('http://www.aluralflix4.com');",
-									"    pm.expect(responseJson.active).to.be.a('boolean');",
-									"    pm.expect(responseJson.active).to.eql(true);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"descricao\": \"teste de descricao 4\",\n    \"url\": \"http://www.aluralflix4.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
-					},
-					"response": []
-				},
-				{
-					"name": "Update non existing video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should not update video by Id\", function(){",
-									"    pm.response.to.have.status(500);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"    pm.expect(responseJson.error).to.equal(\"mongo: no documents in result\");",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"descricao\": \"teste de descricao 4\",\n    \"url\": \"http://www.aluralflix4.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete existing video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should delete video by Id\", function(){",
-									"    pm.response.to.have.status(204);",
-									"    pm.response.to.not.be.withBody;",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete non existing video",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Should delete video by Id\", function(){",
-									"    pm.response.to.have.status(500);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\");",
-									"    pm.expect(responseJson.error).to.equal(\"no document deleted\");",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Categories",
 			"item": [
 				{
@@ -693,6 +340,398 @@
 						"method": "DELETE",
 						"header": [],
 						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Videos",
+			"item": [
+				{
+					"name": "Post a new Valid Category For video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should insert a new category\", function(){",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"",
+									"    var category_id = responseJson.id",
+									"    pm.collectionVariables.set(\"category_id\", category_id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"cor\": \"cor 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Post new valid video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should insert a new video\", function(){",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"",
+									"    var video_id = responseJson.id",
+									"    pm.collectionVariables.set(\"video_id\", video_id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\",\n    \"categoriaId\":\"{{category_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid payload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should receive a 400 status and an invalid request payload message\", function(){",
+									"    pm.response.to.have.status(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"Invalid request payload\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should receive a 400 status and an error message\", function(){",
+									"    pm.response.to.have.status(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"Titulo is required.\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\",\n    \"categoriaID\":\"610ac29000cf9f5dcf354535\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all videos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all videos\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get existing video by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return video by Id\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
+									"    pm.expect(responseJson.titulo).to.be.a('string');",
+									"    pm.expect(responseJson.titulo).to.eql('teste 1');",
+									"    pm.expect(responseJson.descricao).to.be.a('string');",
+									"    pm.expect(responseJson.descricao).to.eql('teste de descricao 1');",
+									"    pm.expect(responseJson.url).to.be.a('string');",
+									"    pm.expect(responseJson.url).to.eql('http://www.aluralflix.com');",
+									"    pm.expect(responseJson.active).to.be.a('boolean');",
+									"    pm.expect(responseJson.active).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get non existing video by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return not found\", function(){",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should update video by Id\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.id).to.have.lengthOf(24);",
+									"    pm.expect(responseJson.titulo).to.be.a('string');",
+									"    pm.expect(responseJson.titulo).to.eql('teste 4');",
+									"    pm.expect(responseJson.descricao).to.be.a('string');",
+									"    pm.expect(responseJson.descricao).to.eql('teste de descricao 4');",
+									"    pm.expect(responseJson.url).to.be.a('string');",
+									"    pm.expect(responseJson.url).to.eql('http://www.aluralflix4.com');",
+									"    pm.expect(responseJson.active).to.be.a('boolean');",
+									"    pm.expect(responseJson.active).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"descricao\": \"teste de descricao 4\",\n    \"url\": \"http://www.aluralflix4.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update non existing video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should not update video by Id\", function(){",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"mongo: no documents in result\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"descricao\": \"teste de descricao 4\",\n    \"url\": \"http://www.aluralflix4.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should delete video by Id\", function(){",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete non existing video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should delete video by Id\", function(){",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"no document deleted\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
 					},
 					"response": []
 				}

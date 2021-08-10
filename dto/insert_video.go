@@ -8,18 +8,20 @@ import (
 )
 
 type InsertVideo struct {
-	Titulo    string `bson:"titulo" json:"titulo"`
-	Descricao string `bson:"descricao" json:"descricao"`
-	Url       string `bson:"url" json:"url"`
+	Titulo     string             `bson:"titulo" json:"titulo"`
+	Descricao  string             `bson:"descricao" json:"descricao"`
+	Url        string             `bson:"url" json:"url"`
+	CategoryID primitive.ObjectID `bson:"category_id" json:"categoriaID"`
 }
 
 func (video *InsertVideo) ConvertToVideo() models.Video {
 	return models.Video{
-		ID:        primitive.NewObjectID(),
-		Titulo:    video.Titulo,
-		Descricao: video.Descricao,
-		Url:       video.Url,
-		Active:    true,
+		ID:         primitive.NewObjectID(),
+		Titulo:     video.Titulo,
+		Descricao:  video.Descricao,
+		Url:        video.Url,
+		CategoryID: video.CategoryID,
+		Active:     true,
 	}
 }
 
@@ -38,4 +40,3 @@ func (video *InsertVideo) Validate() error {
 	}
 	return nil
 }
-

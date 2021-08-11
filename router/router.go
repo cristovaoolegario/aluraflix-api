@@ -15,6 +15,7 @@ func Router() *mux.Router {
 
 func addVideosResources(r *mux.Router) {
 	r.HandleFunc("/api/v1/videos", GetAllVideos).Methods("GET")
+	r.HandleFunc("/api/v1/videos", GetAllVideos).Queries("search", "{search}").Methods("GET")
 	r.HandleFunc("/api/v1/videos/{id}", GetVideoByID).Methods("GET")
 	r.HandleFunc("/api/v1/videos", CreateVideo).Methods("POST")
 	r.HandleFunc("/api/v1/videos/{id}", UpdateVideoByID).Methods("PUT")

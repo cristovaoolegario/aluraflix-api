@@ -20,7 +20,7 @@ func TestGetAllVideos_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItems
 	videoArrayJson, _ := json.Marshal(videoArray)
 	videoService = &VideoServiceMock{}
 
-	videoServiceMockGetAll = func() ([]models.Video, error) {
+	videoServiceMockGetAll = func(filter string) ([]models.Video, error) {
 		return videoArray, nil
 	}
 
@@ -37,7 +37,7 @@ func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndNotFoundStatusResponse_When
 
 	videoService = &VideoServiceMock{}
 
-	videoServiceMockGetAll = func() ([]models.Video, error) {
+	videoServiceMockGetAll = func(filter string) ([]models.Video, error) {
 		return nil, nil
 	}
 
@@ -54,7 +54,7 @@ func TestGetAllVideos_ShouldReturnErrorAndInternalServerErrorStatusResponse_When
 
 	videoService = &VideoServiceMock{}
 
-	videoServiceMockGetAll = func() ([]models.Video, error) {
+	videoServiceMockGetAll = func(filter string) ([]models.Video, error) {
 		return nil, errors.New("Error test")
 	}
 

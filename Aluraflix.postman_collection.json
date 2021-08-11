@@ -528,6 +528,92 @@
 					"response": []
 				},
 				{
+					"name": "Get all videos with search filter that exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all videos\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/v1/videos?search=test",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"videos"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "test"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all videos with search filter that dont exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all videos\", function(){",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/v1/videos?search=a",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"videos"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get existing video by Id",
 					"event": [
 						{
@@ -600,6 +686,60 @@
 						"method": "GET",
 						"header": [],
 						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Get videos by category ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return videos by category Id\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/{{category_id}}/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get videos by non existing category ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return videos by category Id\", function(){",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535/videos"
 					},
 					"response": []
 				},
@@ -704,6 +844,29 @@
 						"method": "DELETE",
 						"header": [],
 						"url": "{{host}}{{port}}/api/v1/videos/{{video_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing category for video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should delete category by Id\", function(){",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/{{category_id}}"
 					},
 					"response": []
 				},

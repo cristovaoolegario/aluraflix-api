@@ -3,12 +3,14 @@ package db
 import (
 	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
-	"testing"
-
+	"github.com/cristovaoolegario/aluraflix-api/mocked_services"
+	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
+	"testing"
 )
 
 func TestVideoService(t *testing.T) {
@@ -104,10 +106,17 @@ func TestVideoService(t *testing.T) {
 		id := primitive.NewObjectID()
 		expectedCategory := mocked_data.GetValidCategoryWithId(id)
 
-		firstResponse := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory))
-		secondResponse := mtest.CreateSuccessResponse()
+		firstResponse := mtest.CreateSuccessResponse()
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
-		mt.AddMockResponses(firstResponse,secondResponse, killCursors)
+		mt.AddMockResponses(firstResponse, killCursors)
+
+		categoryService = &mocked_services.CategoryServiceMock{}
+		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
+			return nil
+		}
+		mocked_services.CategoryServiceMockGetByID = func(id primitive.ObjectID) (*models.Category, error) {
+			return expectedCategory, nil
+		}
 
 		var videoService = VideoService{}
 		insertedVideo, err := videoService.Create(mocked_data.GetValidInsertVideoDto())
@@ -119,10 +128,6 @@ func TestVideoService(t *testing.T) {
 
 	mt.Run("CreateVideo method Should return error when could not insert", func(mt *mtest.T) {
 		categoriesCollection = mt.Coll
-		id := primitive.NewObjectID()
-		expectedCategory := mocked_data.GetValidCategoryWithId(id)
-
-		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
 
 		videosCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
@@ -130,6 +135,14 @@ func TestVideoService(t *testing.T) {
 			Code:    11000,
 			Message: "Con't insert data",
 		}))
+
+		categoryService = &mocked_services.CategoryServiceMock{}
+		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
+			return nil
+		}
+		mocked_services.CategoryServiceMockGetByID = func(id primitive.ObjectID) (*models.Category, error) {
+			return mocked_data.GetValidCategory(), nil
+		}
 
 		var videoService = VideoService{}
 
@@ -145,6 +158,10 @@ func TestVideoService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
 
+		categoryService = &mocked_services.CategoryServiceMock{}
+		mocked_services.CategoryServiceMockGetByID = func(id primitive.ObjectID) (*models.Category, error) {
+			return nil, mongo.ErrNoDocuments
+		}
 		var videoService = VideoService{}
 
 		insertedVideo, err := videoService.Create(dto.InsertVideo{})

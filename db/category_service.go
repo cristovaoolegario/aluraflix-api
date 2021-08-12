@@ -4,22 +4,14 @@ import (
 	"context"
 	"errors"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
+	"github.com/cristovaoolegario/aluraflix-api/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type ICategoryService interface {
-	GetAll() ([]models.Category, error)
-	GetById(id primitive.ObjectID) (*models.Category, error)
-	Create(insertCategory dto.InsertCategory) (*models.Category, error)
-	Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error)
-	Delete(id primitive.ObjectID) error
-	GetVideosByCategoryId(id primitive.ObjectID) ([]models.Video, error)
-}
-
-var _ ICategoryService = (*CategoryService)(nil)
+var _ interfaces.ICategoryService = (*CategoryService)(nil)
 
 type CategoryService struct{}
 
@@ -67,7 +59,7 @@ func (cs *CategoryService) Update(id primitive.ObjectID, newData dto.InsertCateg
 }
 
 func (cs *CategoryService) Delete(id primitive.ObjectID) error {
-	result, err := categoriesCollection.DeleteOne(context.TODO(), bson.M{"_id":id})
+	result, err := categoriesCollection.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if result.DeletedCount == 0 {
 		return errors.New("no document deleted")
 	}
@@ -83,4 +75,17 @@ func (cs *CategoryService) GetVideosByCategoryId(id primitive.ObjectID) ([]model
 	_ = cursor.All(context.TODO(), &videos)
 
 	return videos, err
+}
+
+func (cs *CategoryService) GetFreeCategory() *models.Category {
+	category := models.Category{}
+	if err := categoriesCollection.FindOne(context.TODO(), bson.M{"titulo": "FREE"}).Decode(&category); err != nil {
+		category = *models.GetFreeCategory()
+		_, err := categoriesCollection.InsertOne(context.TODO(), &category)
+		if err != nil {
+			return nil
+		}
+		return &category
+	}
+	return &category
 }

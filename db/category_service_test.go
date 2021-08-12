@@ -3,6 +3,7 @@ package db
 import (
 	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/mocked_data"
+	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,7 +14,6 @@ import (
 func TestCategoryService(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	defer mt.Close()
-
 
 	mt.Run("GetAllCategories method Should return object when has objects", func(mt *mtest.T) {
 		categoriesCollection = mt.Coll
@@ -193,6 +193,64 @@ func TestCategoryService(t *testing.T) {
 		response, err := categoryService.GetVideosByCategoryId(primitive.ObjectID{})
 		assert.NotNil(t, err)
 		assert.Equal(t, 0, len(response))
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetFreeCategory method Should return free category object when object already exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+
+		expectedCategory := mocked_data.GetValidCategory()
+
+		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
+
+		var categoryService = CategoryService{}
+
+		response := categoryService.GetFreeCategory()
+		assert.NotNil(t, response)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetFreeCategory method Should create free category and return object when object dont exists", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+		expectedFreeCategory := models.GetFreeCategory()
+
+		firstResponse := mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't find data",
+		})
+		secondResponse := mtest.CreateSuccessResponse()
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(firstResponse, secondResponse, killCursors)
+
+		var categoryService = CategoryService{}
+		response := categoryService.GetFreeCategory()
+
+		assert.NotNil(t, response)
+		assert.Equal(t, expectedFreeCategory, response)
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetFreeCategory method Should return nil when free category dont exists and cant be created", func(mt *mtest.T) {
+		categoriesCollection = mt.Coll
+
+		firstResponse := mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't find data",
+		})
+		secondResponse := mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "Con't insert data",
+		})
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(firstResponse, secondResponse, killCursors)
+
+		var categoryService = CategoryService{}
+
+		response := categoryService.GetFreeCategory()
+		assert.Nil(t, response)
 		mt.ClearMockResponses()
 	})
 }

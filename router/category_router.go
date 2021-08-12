@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"github.com/cristovaoolegario/aluraflix-api/db"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
+	"github.com/cristovaoolegario/aluraflix-api/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
 
-var categoryService db.ICategoryService
+var categoryService interfaces.ICategoryService
 
 func init() {
 	categoryService = &db.CategoryService{}

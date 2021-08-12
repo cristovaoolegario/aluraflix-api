@@ -427,6 +427,45 @@
 					"response": []
 				},
 				{
+					"name": "Post new valid video with free category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should insert a new video\", function(){",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"",
+									"    var free_video_id = responseJson.id",
+									"    pm.collectionVariables.set(\"free_video_id\", free_video_id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste free\",\n    \"descricao\": \"teste de descricao free\",\n    \"url\": \"http://www.aluralflix.com\",\n    \"categoriaId\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
 					"name": "Post invalid payload",
 					"event": [
 						{
@@ -848,6 +887,29 @@
 					"response": []
 				},
 				{
+					"name": "Delete existing video with free category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should delete video by Id\", function(){",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.be.withBody;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/{{free_video_id}}"
+					},
+					"response": []
+				},
+				{
 					"name": "Delete existing category for video",
 					"event": [
 						{
@@ -936,6 +998,10 @@
 		},
 		{
 			"key": "category_id",
+			"value": ""
+		},
+		{
+			"key": "free_video_id",
 			"value": ""
 		}
 	]

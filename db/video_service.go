@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
+	"github.com/cristovaoolegario/aluraflix-api/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,22 +13,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type IVideoService interface {
-	GetAll(filter string) ([]models.Video, error)
-	GetByID(id primitive.ObjectID) (*models.Video, error)
-	Create(video dto.InsertVideo) (*models.Video, error)
-	Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
-	Delete(id primitive.ObjectID) error
-}
-
-var _ IVideoService = (*VideoService)(nil)
+var _ interfaces.IVideoService = (*VideoService)(nil)
+var categoryService interfaces.ICategoryService
 
 type VideoService struct{}
+
+func init() {
+	categoryService = &CategoryService{}
+}
 
 func (vs *VideoService) GetAll(filter string) ([]models.Video, error) {
 	collectionFilter := bson.M{}
 	if filter != "" {
-		collectionFilter = bson.M{"titulo": bson.M{ "$regex" : fmt.Sprintf(".*%s.*", filter)}}
+		collectionFilter = bson.M{"titulo": bson.M{"$regex": fmt.Sprintf(".*%s.*", filter)}}
 	}
 	var Videos []models.Video
 	cursor, err := videosCollection.Find(context.TODO(), collectionFilter)
@@ -49,8 +47,11 @@ func (vs *VideoService) GetByID(id primitive.ObjectID) (*models.Video, error) {
 
 func (vs *VideoService) Create(model dto.InsertVideo) (*models.Video, error) {
 	convertedVideo := model.ConvertToVideo()
-	category := models.Category{}
-	if err := categoriesCollection.FindOne(context.TODO(), bson.M{"_id": convertedVideo.CategoryID}).Decode(&category); err == mongo.ErrNoDocuments {
+	if convertedVideo.CategoryID.IsZero() {
+		_ = categoryService.GetFreeCategory()
+	}
+
+	if _, err := categoryService.GetById(convertedVideo.CategoryID); err == mongo.ErrNoDocuments {
 		return nil, errors.New("Category with id " + convertedVideo.CategoryID.Hex() + " dont exists.")
 	}
 	_, err := videosCollection.InsertOne(context.TODO(), &convertedVideo)

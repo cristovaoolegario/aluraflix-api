@@ -29,7 +29,7 @@ func TestCategoryService(t *testing.T) {
 
 		var categoryService = CategoryService{}
 
-		response, err := categoryService.GetAll()
+		response, err := categoryService.GetAll("", 1, 5)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(response))
 		mt.ClearMockResponses()
@@ -43,7 +43,7 @@ func TestCategoryService(t *testing.T) {
 
 		var categoryService = CategoryService{}
 
-		response, err := categoryService.GetAll()
+		response, err := categoryService.GetAll("", 1, 5)
 		assert.NotNil(t, err)
 		assert.Equal(t, 0, len(response))
 		mt.ClearMockResponses()

@@ -9,7 +9,7 @@ import (
 
 var _ interfaces.IVideoService = (*VideoServiceMock)(nil)
 
-var VideoServiceMockGetAll func(filter string) ([]models.Video, error)
+var VideoServiceMockGetAll func(filter string, page int64, pageSize int64) ([]models.Video, error)
 var VideoServiceMockGetById func(id primitive.ObjectID) (*models.Video, error)
 var VideoServiceMockCreate func(video dto.InsertVideo) (*models.Video, error)
 var VideoServiceMockUpdate func(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error)
@@ -17,8 +17,8 @@ var VideoServiceMockDelete func(id primitive.ObjectID) error
 
 type VideoServiceMock struct{}
 
-func (vs *VideoServiceMock) GetAll(filter string) ([]models.Video, error){
-	return VideoServiceMockGetAll(filter)
+func (vs *VideoServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error){
+	return VideoServiceMockGetAll(filter, page, pageSize)
 }
 
 func (vs *VideoServiceMock) GetByID(id primitive.ObjectID) (*models.Video, error) {

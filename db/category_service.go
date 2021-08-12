@@ -15,9 +15,10 @@ var _ interfaces.ICategoryService = (*CategoryService)(nil)
 
 type CategoryService struct{}
 
-func (cs *CategoryService) GetAll() ([]models.Category, error) {
+func (cs *CategoryService) GetAll(filter string, page int64, pageSize int64) ([]models.Category, error) {
+	collectionFilter, findOptions := makeFindOptions(filter, page, pageSize)
 	var Categories []models.Category
-	cursor, err := categoriesCollection.Find(context.TODO(), bson.M{})
+	cursor, err := categoriesCollection.Find(context.TODO(), collectionFilter, findOptions)
 
 	if err != nil {
 		return nil, err

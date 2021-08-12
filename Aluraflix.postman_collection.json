@@ -149,6 +149,108 @@
 					"response": []
 				},
 				{
+					"name": "Get all categorie with search filter that exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all Categories\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/v1/categories?search=FREE&page=1&pageSize=1",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "FREE"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all categorie with search filter that dont exists Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all Categories\", function(){",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/v1/categories?search=testx&page=1&pageSize=1",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "testx"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get existing category by ID",
 					"event": [
 						{
@@ -590,7 +692,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/api/v1/videos?search=test",
+							"raw": "{{host}}{{port}}/api/v1/videos?search=test&page=1&pageSize=1",
 							"host": [
 								"{{host}}{{port}}"
 							],
@@ -603,6 +705,14 @@
 								{
 									"key": "search",
 									"value": "test"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "1"
 								}
 							]
 						}

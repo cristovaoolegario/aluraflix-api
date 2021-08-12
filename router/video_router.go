@@ -18,8 +18,8 @@ func init() {
 }
 
 func GetAllVideos(w http.ResponseWriter, r *http.Request) {
-	filter := r.FormValue("search")
-	videos, err := videoService.GetAll(filter)
+	filter, page, pageSize := getQueryParams(r.URL.Query())
+	videos, err := videoService.GetAll(filter, page, pageSize)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

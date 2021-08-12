@@ -20,7 +20,7 @@ func TestGetAllCategories_ShouldReturnCategoryArrayAndOKStatusResponse_WhenThere
 	categoryArray := []models.Category{*mocked_data.GetValidCategory()}
 	categoryArrayJson, _ := json.Marshal(categoryArray)
 
-	mocked_services.CategoryServiceMockGetAll = func() ([]models.Category, error) {
+	mocked_services.CategoryServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Category, error) {
 		return categoryArray, nil
 	}
 
@@ -37,7 +37,7 @@ func TestGetAllCategories_ShouldReturnErrorAndInternalServerErrorStatusResponse_
 
 	categoryService = &mocked_services.CategoryServiceMock{}
 
-	mocked_services.CategoryServiceMockGetAll = func() ([]models.Category, error) {
+	mocked_services.CategoryServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Category, error) {
 		return nil, errors.New("Error test")
 	}
 
@@ -54,7 +54,7 @@ func TestGetAllCategories_ShouldReturnEmptyArrayAndNotFoundStatusResponse_WhenTh
 
 	categoryService = &mocked_services.CategoryServiceMock{}
 
-	mocked_services.CategoryServiceMockGetAll = func() ([]models.Category, error) {
+	mocked_services.CategoryServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Category, error) {
 		return nil, nil
 	}
 

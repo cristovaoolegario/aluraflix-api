@@ -18,7 +18,8 @@ func init() {
 }
 
 func GetAllCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := categoryService.GetAll()
+	filter, page, pageSize := getQueryParams(r.URL.Query())
+	categories, err := categoryService.GetAll(filter, page, pageSize)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

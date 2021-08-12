@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -36,4 +38,15 @@ func (dbService *DatabaseService) Connect() {
 	dbService.db = client.Database(dbService.Database)
 	videosCollection = dbService.db.Collection(VideoCollection)
 	categoriesCollection = dbService.db.Collection(CategoriesCollection)
+}
+
+func makeFindOptions(filter string, page int64, pageSize int64) (bson.M, *options.FindOptions) {
+	collectionFilter := bson.M{}
+	findOptions := options.Find()
+	findOptions.SetLimit(pageSize)
+	findOptions.SetSkip((page - 1) * pageSize)
+	if filter != "" {
+		collectionFilter = bson.M{"titulo": bson.M{"$regex": fmt.Sprintf(".*%s.*", filter)}}
+	}
+	return collectionFilter, findOptions
 }

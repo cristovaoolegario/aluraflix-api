@@ -22,16 +22,16 @@ func TestVideoService(t *testing.T) {
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
-		firstVideo := mtest.CreateCursorResponse(1,"foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
+		firstVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
 
-		secondVideo := mtest.CreateCursorResponse(1,"foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
+		secondVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
 
 		var videoService = VideoService{}
 
-		videoResponse, err := videoService.GetAll("")
+		videoResponse, err := videoService.GetAll("", 1, 5)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(videoResponse))
 		mt.ClearMockResponses()
@@ -42,16 +42,16 @@ func TestVideoService(t *testing.T) {
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
-		firstVideo := mtest.CreateCursorResponse(1,"foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
+		firstVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
 
-		secondVideo := mtest.CreateCursorResponse(1,"foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
+		secondVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
 
 		var videoService = VideoService{}
 
-		videoResponse, err := videoService.GetAll("test")
+		videoResponse, err := videoService.GetAll("test", 1, 5)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(videoResponse))
 		mt.ClearMockResponses()
@@ -65,7 +65,7 @@ func TestVideoService(t *testing.T) {
 
 		var videoService = VideoService{}
 
-		videoResponse, err := videoService.GetAll("")
+		videoResponse, err := videoService.GetAll("", 1, 5)
 		assert.NotNil(t, err)
 		assert.Equal(t, 0, len(videoResponse))
 		mt.ClearMockResponses()

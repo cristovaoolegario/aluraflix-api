@@ -21,11 +21,11 @@ func TestGetAllVideos_ShouldReturnVideosArrayAndOKStatusResponse_WhenTheresItems
 	videoArrayJson, _ := json.Marshal(videoArray)
 	videoService = &mocked_services.VideoServiceMock{}
 
-	mocked_services.VideoServiceMockGetAll = func(filter string) ([]models.Video, error) {
+	mocked_services.VideoServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Video, error) {
 		return videoArray, nil
 	}
 
-	r, _ := http.NewRequest("GET", "/api/v1/videos", nil)
+	r, _ := http.NewRequest("GET", "/api/v1/videos?page=1&pageSize=5", nil)
 	w := httptest.NewRecorder()
 
 	GetAllVideos(w, r)
@@ -38,7 +38,7 @@ func TestGetAllVideos_ShouldReturnEmptyVideosArrayAndNotFoundStatusResponse_When
 
 	videoService = &mocked_services.VideoServiceMock{}
 
-	mocked_services.VideoServiceMockGetAll = func(filter string) ([]models.Video, error) {
+	mocked_services.VideoServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Video, error) {
 		return nil, nil
 	}
 
@@ -55,7 +55,7 @@ func TestGetAllVideos_ShouldReturnErrorAndInternalServerErrorStatusResponse_When
 
 	videoService = &mocked_services.VideoServiceMock{}
 
-	mocked_services.VideoServiceMockGetAll = func(filter string) ([]models.Video, error) {
+	mocked_services.VideoServiceMockGetAll = func(filter string, page int64, pageSize int64) ([]models.Video, error) {
 		return nil, errors.New("Error test")
 	}
 

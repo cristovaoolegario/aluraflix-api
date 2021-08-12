@@ -9,7 +9,7 @@ import (
 
 var _ interfaces.ICategoryService = (*CategoryServiceMock)(nil)
 
-var CategoryServiceMockGetAll func() ([]models.Category, error)
+var CategoryServiceMockGetAll func(filter string, page int64, pageSize int64) ([]models.Category, error)
 var CategoryServiceMockGetByID func(id primitive.ObjectID) (*models.Category, error)
 var CategoryServiceMockCreate func(insertCategory dto.InsertCategory) (*models.Category, error)
 var CategoryServiceMockUpdate func(id primitive.ObjectID, insertCategory dto.InsertCategory) (*models.Category, error)
@@ -23,8 +23,8 @@ func (cs *CategoryServiceMock) GetById(id primitive.ObjectID) (*models.Category,
 	return CategoryServiceMockGetByID(id)
 }
 
-func (cs *CategoryServiceMock) GetAll() ([]models.Category, error){
-	return CategoryServiceMockGetAll()
+func (cs *CategoryServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Category, error){
+	return CategoryServiceMockGetAll(filter, page, pageSize)
 }
 
 func (cs *CategoryServiceMock) Create(insertCategory dto.InsertCategory) (*models.Category, error) {

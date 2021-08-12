@@ -7,7 +7,7 @@ import (
 )
 
 type ICategoryService interface {
-	GetAll() ([]models.Category, error)
+	GetAll(filter string, page int64, pageSize int64) ([]models.Category, error)
 	GetById(id primitive.ObjectID) (*models.Category, error)
 	Create(insertCategory dto.InsertCategory) (*models.Category, error)
 	Update(id primitive.ObjectID, newData dto.InsertCategory) (*models.Category, error)

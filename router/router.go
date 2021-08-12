@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 func Router() *mux.Router {
@@ -42,4 +44,17 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 		response, _ := json.Marshal(payload)
 		w.Write(response)
 	}
+}
+
+func getQueryParams(queryParams url.Values) (filter string, page int64, pageSize int64){
+	filter = queryParams.Get("search")
+	page = 1
+	if n, err := strconv.Atoi(queryParams.Get("page")); err == nil{
+		page = int64(n)
+	}
+	pageSize = 5
+	if n, err := strconv.Atoi(queryParams.Get("pageSize")); err == nil{
+		pageSize = int64(n)
+	}
+	return filter, page, pageSize
 }

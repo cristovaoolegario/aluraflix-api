@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/cristovaoolegario/aluraflix-api/dto"
 	"github.com/cristovaoolegario/aluraflix-api/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/models"
@@ -22,13 +21,10 @@ func init() {
 	categoryService = &CategoryService{}
 }
 
-func (vs *VideoService) GetAll(filter string) ([]models.Video, error) {
-	collectionFilter := bson.M{}
-	if filter != "" {
-		collectionFilter = bson.M{"titulo": bson.M{"$regex": fmt.Sprintf(".*%s.*", filter)}}
-	}
+func (vs *VideoService) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error) {
+	collectionFilter, findOptions := makeFindOptions(filter, page, pageSize)
 	var Videos []models.Video
-	cursor, err := videosCollection.Find(context.TODO(), collectionFilter)
+	cursor, err := videosCollection.Find(context.TODO(), collectionFilter, findOptions)
 
 	if err != nil {
 		return nil, err

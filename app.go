@@ -5,6 +5,7 @@ import (
 	"github.com/cristovaoolegario/aluraflix-api/db"
 	"github.com/cristovaoolegario/aluraflix-api/router"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 )
@@ -21,7 +22,15 @@ func (a *App) Initialize(user, password, hostname, dbname string) {
 	a.router = router.Router()
 }
 
-func (a *App) Run(port string) {
+func (a *App) Run(port, env string) {
 	fmt.Println("Server running in port:", port)
-	log.Fatal(http.ListenAndServe(port, a.router))
+	if env == "dev" {
+		corsWrapper := cors.New(cors.Options{
+			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+			AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*"},
+		})
+		log.Fatal(http.ListenAndServe(port, corsWrapper.Handler(a.router)))
+	} else {
+		log.Fatal(http.ListenAndServe(port, a.router))
+	}
 }

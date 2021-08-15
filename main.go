@@ -11,5 +11,6 @@ func main() {
 		os.Getenv("APP_DB_HOST"),
 		os.Getenv("APP_DB_NAME"))
 
-	a.Run(":3000")
+	a.Run(":3000",
+		os.Getenv("ENV"))
 }

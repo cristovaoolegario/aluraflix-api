@@ -17,7 +17,7 @@ func init() {
 	categoryService = &db.CategoryService{}
 }
 
-func GetAllCategories(w http.ResponseWriter, r *http.Request) {
+var GetAllCategories = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := getQueryParams(r.URL.Query())
 	categories, err := categoryService.GetAll(filter, page, pageSize)
 	if err != nil {
@@ -29,9 +29,9 @@ func GetAllCategories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, categories)
-}
+})
 
-func GetCategoryByID(w http.ResponseWriter, r *http.Request) {
+var GetCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
 	category, err := categoryService.GetById(id)
@@ -40,9 +40,9 @@ func GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, category)
-}
+})
 
-func CreateCategory(w http.ResponseWriter, r *http.Request) {
+var CreateCategory = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var category dto.InsertCategory
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -60,9 +60,9 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusCreated, insertedVideo)
-}
+})
 
-func UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
+var UpdateCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var category dto.InsertCategory
@@ -83,9 +83,9 @@ func UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, updatedCategory)
-}
+})
 
-func DeleteCategoryByID(w http.ResponseWriter, r *http.Request){
+var DeleteCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	if err := categoryService.Delete(id); err != nil {
@@ -93,9 +93,9 @@ func DeleteCategoryByID(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	respondWithJson(w, http.StatusNoContent, nil)
-}
+})
 
-func GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request){
+var GetAllVideosByCategoryID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
 	videos, err := categoryService.GetVideosByCategoryId(id)
@@ -108,5 +108,4 @@ func GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
-}
-
+})

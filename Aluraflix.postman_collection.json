@@ -6,6 +6,382 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return access_token\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"",
+									"    var access_token = responseJson.access_token",
+									"    pm.collectionVariables.set(\"access_token\", access_token);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\":\"{{client_id}}\",\n    \"client_secret\":\"{{client_secret}}\",\n    \"audience\":\"{{audience}}\",\n    \"grant_type\":\"client_credentials\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://alura-flix-api.us.auth0.com/oauth/token"
+					},
+					"response": []
+				},
+				{
+					"name": "Post a new Category with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for post new category\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"cor\": \"cor 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all categories with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for get all categories category\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get existing category by ID with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for category by ID\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing category with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for updating category by id\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 2\",\n    \"cor\": \"cor 2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing category with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for deleting a category\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/categories/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Post new valid video with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for post a new video\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 1\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\",\n    \"categoriaId\":\"{{category_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all videos with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for get all videos\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get existing video by Id with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for get video by Id\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing video with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for update video\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste 4\",\n    \"descricao\": \"teste de descricao 4\",\n    \"url\": \"http://www.aluralflix4.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing video with invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized for delete video\", function(){",
+									"    pm.response.to.have.status(401);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/610ac29000cf9f5dcf354535"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Categories",
 			"item": [
 				{
@@ -200,7 +576,7 @@
 					"response": []
 				},
 				{
-					"name": "Get all categorie with search filter that dont exists Copy",
+					"name": "Get all categorie with search filter that dont exists",
 					"event": [
 						{
 							"listen": "test",
@@ -642,6 +1018,43 @@
 					"response": []
 				},
 				{
+					"name": "Post valid video with invalid category id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should receive a 400 status and an error message\", function(){",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.error).to.equal(\"Category with id 610ac29000cf9f5dcf354535 dont exists.\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"teste\",\n    \"descricao\": \"teste de descricao 1\",\n    \"url\": \"http://www.aluralflix.com\",\n    \"categoriaID\":\"610ac29000cf9f5dcf354535\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
 					"name": "Get all videos",
 					"event": [
 						{
@@ -663,7 +1076,14 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": "{{host}}{{port}}/api/v1/videos"
 					},
 					"response": []
@@ -1073,6 +1493,12 @@
 			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{access_token}}"
+		}
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -1113,6 +1539,22 @@
 		{
 			"key": "free_video_id",
 			"value": ""
+		},
+		{
+			"key": "client_id",
+			"value": "8O4EIxUKolKfPoVj90jtQ1Xd1ntXVj5e"
+		},
+		{
+			"key": "client_secret",
+			"value": "Px3auN1YRvniCCBDsf06HHEsmc4w8Zb3y54U3jNO15y9bwJj8riqKEiceN7Cij9C"
+		},
+		{
+			"key": "audience",
+			"value": "https://alura-flix-api/"
+		},
+		{
+			"key": "access_token",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik0wWG8tNW1RcTJubEVEZ2tiWmVFbSJ9.eyJpc3MiOiJodHRwczovL2FsdXJhLWZsaXgtYXBpLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiI4TzRFSXhVS29sS2ZQb1ZqOTBqdFExWGQxbnRYVmo1ZUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hbHVyYS1mbGl4LWFwaS8iLCJpYXQiOjE2MjkwODc3ODMsImV4cCI6MTYyOTE3NDE4MywiYXpwIjoiOE80RUl4VUtvbEtmUG9WajkwanRRMVhkMW50WFZqNWUiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMifQ.klaHC5R3UjjW-myWkMT-hrkmocOCM7oBmtVkjG4TMLYsldom4opCWBHFqYFldKSa5fPLC7n3HhcrBzSgEgjT4n7Y3LIJO02bvNWJU9Ei8q0u_AiiHknKJCypMS9-AEJ-DOxj4R78XEwqYKiqHwIChMAZuv1Ml-MZBA_aJjls9yM9DcIFwXvDenMyEMLLGTg3-Sj3GYFtrHalVYu6xN0J1j9FcIDWSKYG3amItVcrM5LyLfru_biWWZ0QHVO7ADKDM5i9Dni1nz28xFITk2GI5MwVLLPUlrsDqaAL4qrumazTfGUiCg9cQXwp2RmQl0v26FgdvUQb8L67PJOQj7c5rg"
 		}
 	]
 }

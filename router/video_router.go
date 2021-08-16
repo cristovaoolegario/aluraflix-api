@@ -17,7 +17,7 @@ func init() {
 	videoService = &db.VideoService{}
 }
 
-func GetAllVideos(w http.ResponseWriter, r *http.Request) {
+var GetAllVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := getQueryParams(r.URL.Query())
 	videos, err := videoService.GetAll(filter, page, pageSize)
 	if err != nil {
@@ -29,9 +29,9 @@ func GetAllVideos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
-}
+})
 
-func GetVideoByID(w http.ResponseWriter, r *http.Request) {
+var GetVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
 	video, err := videoService.GetByID(id)
@@ -40,9 +40,9 @@ func GetVideoByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, video)
-}
+})
 
-func CreateVideo(w http.ResponseWriter, r *http.Request) {
+var CreateVideo = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var video dto.InsertVideo
 	err := json.NewDecoder(r.Body).Decode(&video)
@@ -60,9 +60,9 @@ func CreateVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusCreated, createdVideo)
-}
+})
 
-func UpdateVideoByID(w http.ResponseWriter, r *http.Request) {
+var UpdateVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var video dto.InsertVideo
@@ -82,9 +82,9 @@ func UpdateVideoByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, updatedVideo)
-}
+})
 
-func DeleteVideoByID(w http.ResponseWriter, r *http.Request) {
+var DeleteVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	if err := videoService.Delete(id); err != nil {
@@ -92,4 +92,4 @@ func DeleteVideoByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusNoContent, nil)
-}
+})

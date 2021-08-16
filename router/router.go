@@ -2,6 +2,9 @@ package router
 
 import (
 	"encoding/json"
+	"github.com/auth0/go-jwt-middleware"
+	"github.com/cristovaoolegario/aluraflix-api/auth"
+	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
 	"net/url"
@@ -10,27 +13,26 @@ import (
 
 func Router() *mux.Router {
 	r := mux.Router{}
-	addVideosResources(&r)
-	addCategoriesResources(&r)
+	addVideosResources(&r, auth.JwtMiddleware)
+	addCategoriesResources(&r, auth.JwtMiddleware)
 	return &r
 }
 
-func addVideosResources(r *mux.Router) {
-	r.HandleFunc("/api/v1/videos", GetAllVideos).Methods("GET")
-	r.HandleFunc("/api/v1/videos", GetAllVideos).Queries("search", "{search}").Methods("GET")
-	r.HandleFunc("/api/v1/videos/{id}", GetVideoByID).Methods("GET")
-	r.HandleFunc("/api/v1/videos", CreateVideo).Methods("POST")
-	r.HandleFunc("/api/v1/videos/{id}", UpdateVideoByID).Methods("PUT")
-	r.HandleFunc("/api/v1/videos/{id}", DeleteVideoByID).Methods("DELETE")
+func addVideosResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
+	r.Handle("/api/v1/videos", middleware.Handler(GetAllVideos)).Methods("GET")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(GetVideoByID)).Methods("GET")
+	r.Handle("/api/v1/videos", middleware.Handler(CreateVideo)).Methods("POST")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(UpdateVideoByID)).Methods("PUT")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(DeleteVideoByID)).Methods("DELETE")
 }
 
-func addCategoriesResources(r *mux.Router) {
-	r.HandleFunc("/api/v1/categories", GetAllCategories).Methods("GET")
-	r.HandleFunc("/api/v1/categories/{id}", GetCategoryByID).Methods("GET")
-	r.HandleFunc("/api/v1/categories/{id}/videos", GetAllVideosByCategoryID).Methods("GET")
-	r.HandleFunc("/api/v1/categories", CreateCategory).Methods("POST")
-	r.HandleFunc("/api/v1/categories/{id}", UpdateCategoryByID).Methods("PUT")
-	r.HandleFunc("/api/v1/categories/{id}", DeleteCategoryByID).Methods("DELETE")
+func addCategoriesResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
+	r.Handle("/api/v1/categories", middleware.Handler(GetAllCategories)).Methods("GET")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(GetCategoryByID)).Methods("GET")
+	r.Handle("/api/v1/categories/{id}/videos", middleware.Handler(GetAllVideosByCategoryID)).Methods("GET")
+	r.Handle("/api/v1/categories", middleware.Handler(CreateCategory)).Methods("POST")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(UpdateCategoryByID)).Methods("PUT")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(DeleteCategoryByID)).Methods("DELETE")
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {

@@ -1,12 +1,10 @@
 # Start from golang base image
-FROM golang:alpine as builder
+FROM golang:latest as builder
 
 # Enable go modules
+RUN apt update
+RUN apt install ca-certificates && update-ca-certificates
 ENV GO111MODULE=on
-
-# Install git. (alpine image does not have git in it)
-RUN apk update && apk add --no-cache git
-
 # Set current working directory
 WORKDIR /app
 
@@ -31,12 +29,12 @@ COPY . .
 
 # Build the application.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/main .
-
 # Finally our multi-stage to build a small image
 # Start a new stage from scratch
 FROM scratch
 
 # Copy the Pre-built binary file
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /app/bin/main .
 EXPOSE 3000
 # Run executable

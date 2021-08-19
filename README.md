@@ -18,7 +18,7 @@ To run integration tests you can use:
 
 To run all the tests (unit and integration test) in this repo you can use:
 
-```all-tests```
+```make all-tests```
 
 
 ## Run instructions:

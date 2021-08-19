@@ -6,6 +6,8 @@ run:
 	go run main.go app.go
 test:
 	go test -v ./... -cover
-	make integration
-integration:
+integration-test:
 	newman run Aluraflix.postman_collection.json
+all-tests:
+	make test
+	make integration-test

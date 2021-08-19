@@ -1,31 +1,16 @@
 version: '3.7'
 services:
-  aluraflix-api:
-    build: ./main
-    container_name: aluraflix-api
-    depends_on:
-      - 'mongo'
-    environment:
-      - PORT=3000
-    ports:
-      - '3000:3000'
-    volumes:
-      - './go-app:/opt/go-app:cached'
   # MongoDB
   mongo:
-    image: 'mongo:4.2.6-bionic'
-    container_name: mongo
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
     ports:
-      - '27017:27017'
-    volumes:
-      - ./mongodata:/data/db
-    restart: always
-  # Mongo Express Web-based MongoDB admin interface
-  mongo_express:
-    image: mongo-express
-    container_name: mongo_express
-    depends_on:
-      - 'mongo'
-    ports:
-      - '8081:8081'
-    restart: always
+      - 27017:27017
+    networks:
+      - mongo-compose-network
+
+networks:
+  mongo-compose-network:
+    driver: bridge

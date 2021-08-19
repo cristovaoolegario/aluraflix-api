@@ -19,6 +19,7 @@ func Router() *mux.Router {
 }
 
 func addVideosResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
+	r.Handle("/api/v1/videos/free", GetAllFreeVideos).Methods("GET")
 	r.Handle("/api/v1/videos", middleware.Handler(GetAllVideos)).Methods("GET")
 	r.Handle("/api/v1/videos/{id}", middleware.Handler(GetVideoByID)).Methods("GET")
 	r.Handle("/api/v1/videos", middleware.Handler(CreateVideo)).Methods("POST")

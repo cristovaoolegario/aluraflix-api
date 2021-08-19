@@ -17,6 +17,19 @@ func init() {
 	videoService = &db.VideoService{}
 }
 
+var GetAllFreeVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	videos, err := videoService.GetAllFreeVideos()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if videos == nil {
+		respondWithJson(w, http.StatusNotFound, []models.Video{})
+		return
+	}
+	respondWithJson(w, http.StatusOK, videos)
+})
+
 var GetAllVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := getQueryParams(r.URL.Query())
 	videos, err := videoService.GetAll(filter, page, pageSize)

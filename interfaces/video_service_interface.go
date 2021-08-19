@@ -7,6 +7,7 @@ import (
 )
 
 type IVideoService interface {
+	GetAllFreeVideos() ([]models.Video, error)
 	GetAll(filter string, page int64, pageSize int64) ([]models.Video, error)
 	GetByID(id primitive.ObjectID) (*models.Video, error)
 	Create(video dto.InsertVideo) (*models.Video, error)

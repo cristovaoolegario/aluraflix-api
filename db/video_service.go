@@ -21,6 +21,19 @@ func init() {
 	categoryService = &CategoryService{}
 }
 
+func (vs *VideoService) GetAllFreeVideos() ([]models.Video, error) {
+	var Videos []models.Video
+	freeCategory := categoryService.GetFreeCategory()
+	cursor, err := videosCollection.Find(context.TODO(), bson.M{"category_id": freeCategory.ID})
+
+	if err != nil {
+		return nil, err
+	}
+	_ = cursor.All(context.TODO(), &Videos)
+
+	return Videos, nil
+}
+
 func (vs *VideoService) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error) {
 	collectionFilter, findOptions := makeFindOptions(filter, page, pageSize)
 	var Videos []models.Video

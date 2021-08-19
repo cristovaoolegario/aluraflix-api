@@ -17,6 +17,50 @@ func TestVideoService(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	defer mt.Close()
 
+	mt.Run("GetAllFreeVideos method Should return object when has objects", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+		firstId := primitive.NewObjectID()
+		secondId := primitive.NewObjectID()
+
+		firstVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
+
+		secondVideo := mtest.CreateCursorResponse(1, "foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
+
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
+
+		categoryService = &mocked_services.CategoryServiceMock{}
+		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
+			return models.GetFreeCategory()
+		}
+
+		var videoService = VideoService{}
+
+		videoResponse, err := videoService.GetAllFreeVideos()
+		assert.Nil(t, err)
+		assert.Equal(t, 2, len(videoResponse))
+		mt.ClearMockResponses()
+	})
+
+	mt.Run("GetAllFreeVideos method Should return error when dont has objects", func(mt *mtest.T) {
+		videosCollection = mt.Coll
+
+		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
+		mt.AddMockResponses(bson.D{}, killCursors)
+
+		categoryService = &mocked_services.CategoryServiceMock{}
+		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
+			return models.GetFreeCategory()
+		}
+
+		var videoService = VideoService{}
+
+		videoResponse, err := videoService.GetAllFreeVideos()
+		assert.NotNil(t, err)
+		assert.Nil(t, videoResponse)
+		mt.ClearMockResponses()
+	})
+
 	mt.Run("GetAllVideos method Should return object when has objects", func(mt *mtest.T) {
 		videosCollection = mt.Coll
 		firstId := primitive.NewObjectID()
@@ -101,7 +145,6 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return object when inserted", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
 		videosCollection = mt.Coll
 		id := primitive.NewObjectID()
 		expectedCategory := mocked_data.GetValidCategoryWithId(id)

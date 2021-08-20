@@ -25,9 +25,5 @@ To run all the tests (unit and integration test) in this repo you can use:
 
 ``` docker-compose up -d ```
 
-``` go mod download ```
-
-``` go run main.go app.go ```
-
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

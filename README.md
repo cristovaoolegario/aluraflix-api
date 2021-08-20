@@ -9,6 +9,8 @@ This application was developed with:
 - Mongodb
 - Docker-Compose
 
+This project image is being published to this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
+
 ## Pre-requisites
 
 You need to have [Go](https://golang.org/dl/), [Docker](https://www.docker.com/products/docker-desktop) and [NPM](https://www.npmjs.com/) (for integration tests on command line) installed on your machine.

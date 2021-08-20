@@ -911,7 +911,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Should insert a new video\", function(){",
+									"pm.test(\"Should insert a new free video\", function(){",
 									"    pm.response.to.have.status(201);",
 									"    pm.response.to.be.withBody;",
 									"    pm.response.to.be.json;",
@@ -1085,6 +1085,33 @@
 							}
 						],
 						"url": "{{host}}{{port}}/api/v1/videos"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all free videos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return all free videos\", function(){",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}{{port}}/api/v1/videos/free"
 					},
 					"response": []
 				},

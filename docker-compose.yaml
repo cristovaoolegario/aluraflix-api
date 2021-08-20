@@ -1,16 +1,18 @@
 version: '3.7'
 services:
-  # MongoDB
   mongo:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+    image: 'mongo:latest'
+    container_name: 'mongo'
     ports:
-      - 27017:27017
-    networks:
-      - mongo-compose-network
-
-networks:
-  mongo-compose-network:
-    driver: bridge
+      - '27017:27017'
+  aluraflix-api:
+    build: ./
+    container_name: 'aluraflix-api'
+    ports:
+      - '3000:3000'
+    environment:
+      - ENV=dev
+      - AUD=https://alura-flix-api/
+      - ISS=https://alura-flix-api.us.auth0.com/
+      - PORT=:3000
+      - APP_DB_NAME=dev_env

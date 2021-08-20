@@ -17,7 +17,7 @@ type App struct {
 
 func (a *App) Initialize(env, user, password, hostname, dbname string) {
 	if env == "dev" || env == "" {
-		a.database.Server = fmt.Sprintf("mongodb://localhost:27017/test")
+		a.database.Server = "mongodb://mongo:27017/dev_env"
 	}else{
 		a.database.Server = fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority", user, password, hostname, dbname)
 	}

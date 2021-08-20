@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  TAG:${{$(date +%s)}}
+  TAG:${{(date +%s)}}
 
 jobs:
 

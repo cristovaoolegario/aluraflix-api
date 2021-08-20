@@ -1,8 +1,17 @@
 # Aluraflix API
 
+## About the project
+This is a challenge from [Alura Backend Challenges](https://github.com/alura-challenges/challenge-back-end).
+
+This application was developed with:
+
+- Golang
+- Mongodb
+- Docker-Compose
+
 ## Pre-requisites
 
-You need to have Go, Docker and NPM (for integration tests on command line) installed on your machine.
+You need to have [Go](https://golang.org/dl/), [Docker](https://www.docker.com/products/docker-desktop) and [NPM](https://www.npmjs.com/) (for integration tests on command line) installed on your machine.
 
 ```make pre-requisites```
 

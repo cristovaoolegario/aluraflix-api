@@ -10,5 +10,5 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/rs/cors v1.8.0
 	github.com/stretchr/testify v1.7.0
-	go.mongodb.org/mongo-driver v1.7.1
+	go.mongodb.org/mongo-driver v1.7.2
 )

@@ -1,5 +1,7 @@
 # Aluraflix API
 
+![Badge AluraFlix reduzido - Sharer](https://user-images.githubusercontent.com/79534537/130669222-e3e649dd-565b-4bb3-85a7-54bdc4f02dcb.png)
+
 ## About the project
 This is a challenge from [Alura Backend Challenges](https://github.com/alura-challenges/challenge-back-end).
 

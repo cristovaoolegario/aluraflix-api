@@ -61,4 +61,6 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with: 
           push: true
-          tags: latest, ${{ needs.generate-tag.steps.step_tag.outputs.new_tag }}
+          tags: |
+              ${{ secrets.DOCKERHUB_USERNAME }}/aluraflix-api:latest, 
+              ${{ secrets.DOCKERHUB_USERNAME }}/aluraflix-api:${{ needs.generate-tag.steps.step_tag.outputs.new_tag }}

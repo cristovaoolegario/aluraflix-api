@@ -29,9 +29,11 @@ jobs:
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
+        id: step_tag
         uses: anothrNick/github-tag-action@1.36.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: 'patch'
           WITH_V: true
 
   docker-image:
@@ -49,4 +51,4 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: cristovaoolegario/aluraflix-api
-          tags: latest, ${{ github.run_number }}
+          tags: latest, ${{ needs.generate-tag.steps.step_tag.outputs.new_tag }}

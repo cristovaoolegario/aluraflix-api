@@ -11,20 +11,20 @@ import (
 	"strconv"
 )
 
-func Router() *mux.Router {
+func ProvideRouter(videoRouter VideoRouter) mux.Router {
 	r := mux.Router{}
-	addVideosResources(&r, auth.JwtMiddleware)
+	addVideosResources(videoRouter, &r, auth.JwtMiddleware)
 	addCategoriesResources(&r, auth.JwtMiddleware)
-	return &r
+	return r
 }
 
-func addVideosResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
-	r.Handle("/api/v1/videos/free", GetAllFreeVideos).Methods("GET")
-	r.Handle("/api/v1/videos", middleware.Handler(GetAllVideos)).Methods("GET")
-	r.Handle("/api/v1/videos/{id}", middleware.Handler(GetVideoByID)).Methods("GET")
-	r.Handle("/api/v1/videos", middleware.Handler(CreateVideo)).Methods("POST")
-	r.Handle("/api/v1/videos/{id}", middleware.Handler(UpdateVideoByID)).Methods("PUT")
-	r.Handle("/api/v1/videos/{id}", middleware.Handler(DeleteVideoByID)).Methods("DELETE")
+func addVideosResources(videoRouter VideoRouter, r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
+	r.HandleFunc("/api/v1/videos/free", videoRouter.GetAllFreeVideos).Methods("GET")
+	r.Handle("/api/v1/videos", middleware.Handler(http.HandlerFunc(videoRouter.GetAllVideos))).Methods("GET")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(http.HandlerFunc(videoRouter.GetVideoByID))).Methods("GET")
+	r.Handle("/api/v1/videos", middleware.Handler(http.HandlerFunc(videoRouter.CreateVideo))).Methods("POST")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(http.HandlerFunc(videoRouter.UpdateVideoByID))).Methods("PUT")
+	r.Handle("/api/v1/videos/{id}", middleware.Handler(http.HandlerFunc(videoRouter.DeleteVideoByID))).Methods("DELETE")
 }
 
 func addCategoriesResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
@@ -49,14 +49,14 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	}
 }
 
-func getQueryParams(queryParams url.Values) (filter string, page int64, pageSize int64){
+func getQueryParams(queryParams url.Values) (filter string, page int64, pageSize int64) {
 	filter = queryParams.Get("search")
 	page = 1
-	if n, err := strconv.Atoi(queryParams.Get("page")); err == nil{
+	if n, err := strconv.Atoi(queryParams.Get("page")); err == nil {
 		page = int64(n)
 	}
 	pageSize = 5
-	if n, err := strconv.Atoi(queryParams.Get("pageSize")); err == nil{
+	if n, err := strconv.Atoi(queryParams.Get("pageSize")); err == nil {
 		pageSize = int64(n)
 	}
 	return filter, page, pageSize

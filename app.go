@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/cristovaoolegario/aluraflix-api/db"
-	"github.com/cristovaoolegario/aluraflix-api/router"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"log"
@@ -15,15 +14,8 @@ type App struct {
 	database db.DatabaseService
 }
 
-func (a *App) Initialize(env, user, password, hostname, dbname string) {
-	if env == "dev" || env == "" {
-		a.database.Server = "mongodb://mongo:27017/dev_env"
-	}else{
-		a.database.Server = fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority", user, password, hostname, dbname)
-	}
-	a.database.Database = dbname
-	a.database.Connect()
-	a.router = router.Router()
+func ProvideApp(router mux.Router, db db.DatabaseService) App {
+	return App{&router, db}
 }
 
 func (a *App) Run(port, env string) {

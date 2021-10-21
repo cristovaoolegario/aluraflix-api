@@ -11,14 +11,16 @@ import (
 	"net/http"
 )
 
-var videoService interfaces.IVideoService
-
-func init() {
-	videoService = &db.VideoService{}
+type VideoRouter struct {
+	service interfaces.IVideoService
 }
 
-var GetAllFreeVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	videos, err := videoService.GetAllFreeVideos()
+func ProvideVideoRouter(s db.VideoService) VideoRouter {
+	return VideoRouter{&s}
+}
+
+func (vr *VideoRouter) GetAllFreeVideos(w http.ResponseWriter, r *http.Request) {
+	videos, err := vr.service.GetAllFreeVideos()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -28,11 +30,11 @@ var GetAllFreeVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
-})
+}
 
-var GetAllVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (vr *VideoRouter) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := getQueryParams(r.URL.Query())
-	videos, err := videoService.GetAll(filter, page, pageSize)
+	videos, err := vr.service.GetAll(filter, page, pageSize)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -42,20 +44,20 @@ var GetAllVideos = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
-})
+}
 
-var GetVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (vr *VideoRouter) GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
-	video, err := videoService.GetByID(id)
+	video, err := vr.service.GetByID(id)
 	if err != nil {
 		respondWithJson(w, http.StatusNotFound, nil)
 		return
 	}
 	respondWithJson(w, http.StatusOK, video)
-})
+}
 
-var CreateVideo = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (vr *VideoRouter) CreateVideo(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var video dto.InsertVideo
 	err := json.NewDecoder(r.Body).Decode(&video)
@@ -67,15 +69,15 @@ var CreateVideo = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	createdVideo, err := videoService.Create(video)
+	createdVideo, err := vr.service.Create(video)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusCreated, createdVideo)
-})
+}
 
-var UpdateVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (vr *VideoRouter) UpdateVideoByID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var video dto.InsertVideo
@@ -88,21 +90,21 @@ var UpdateVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	updatedVideo, err := videoService.Update(id, video)
+	updatedVideo, err := vr.service.Update(id, video)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusOK, updatedVideo)
-})
+}
 
-var DeleteVideoByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (vr *VideoRouter) DeleteVideoByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	if err := videoService.Delete(id); err != nil {
+	if err := vr.service.Delete(id); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusNoContent, nil)
-})
+}

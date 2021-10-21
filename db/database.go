@@ -6,38 +6,44 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
+	"os"
 	"time"
 )
 
-type DatabaseService struct {
-	Server string
-	Database string
-	db *mongo.Database
-}
-
-var videosCollection *mongo.Collection
-var categoriesCollection *mongo.Collection
-
-const(
-	VideoCollection = "videos"
+const (
+	VideoCollection      = "videos"
 	CategoriesCollection = "categories"
 )
 
-func (dbService *DatabaseService) Connect() {
-	clientOptions := options.Client().
-		ApplyURI(dbService.Server)
+type DatabaseService struct {
+	*mongo.Database
+}
+
+func ProvideDatabaseService() DatabaseService {
+	server := mountServerConnection(os.Getenv("ENV"),
+		os.Getenv("APP_DB_USERNAME"),
+		os.Getenv("APP_DB_PASSWORD"),
+		os.Getenv("APP_DB_HOST"),
+		os.Getenv("APP_DB_NAME"))
+
+	clientOptions := options.Client().ApplyURI(server)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
-		log.Fatal(err)
+		return DatabaseService{}
 	}
-	dbService.db = client.Database(dbService.Database)
-	videosCollection = dbService.db.Collection(VideoCollection)
-	categoriesCollection = dbService.db.Collection(CategoriesCollection)
+
+	return DatabaseService{client.Database(os.Getenv("APP_DB_NAME"))}
+}
+
+func mountServerConnection(env, user, password, hostname, dbname string) string {
+	if env == "dev" || env == "" {
+		return "mongodb://mongo:27017/dev_env"
+	}
+	return fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority", user, password, hostname, dbname)
 }
 
 func makeFindOptions(filter string, page int64, pageSize int64) (bson.M, *options.FindOptions) {

@@ -12,19 +12,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var _ interfaces.IVideoService = (*VideoService)(nil)
-var categoryService interfaces.ICategoryService
+type VideoService struct{
+	categoryService interfaces.ICategoryService
+	videosCollection *mongo.Collection
+}
 
-type VideoService struct{}
-
-func init() {
-	categoryService = &CategoryService{}
+func ProvideVideoService(cs CategoryService, service DatabaseService) VideoService{
+	return VideoService{&cs, service.Collection(VideoCollection)}
 }
 
 func (vs *VideoService) GetAllFreeVideos() ([]models.Video, error) {
 	var Videos []models.Video
-	freeCategory := categoryService.GetFreeCategory()
-	cursor, err := videosCollection.Find(context.TODO(), bson.M{"category_id": freeCategory.ID})
+	freeCategory := vs.categoryService.GetFreeCategory()
+	cursor, err := vs.videosCollection.Find(context.TODO(), bson.M{"category_id": freeCategory.ID})
 
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (vs *VideoService) GetAllFreeVideos() ([]models.Video, error) {
 func (vs *VideoService) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error) {
 	collectionFilter, findOptions := makeFindOptions(filter, page, pageSize)
 	var Videos []models.Video
-	cursor, err := videosCollection.Find(context.TODO(), collectionFilter, findOptions)
+	cursor, err := vs.videosCollection.Find(context.TODO(), collectionFilter, findOptions)
 
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (vs *VideoService) GetAll(filter string, page int64, pageSize int64) ([]mod
 
 func (vs *VideoService) GetByID(id primitive.ObjectID) (*models.Video, error) {
 	Video := models.Video{}
-	if err := videosCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&Video); err != nil {
+	if err := vs.videosCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&Video); err != nil {
 		return nil, err
 	}
 	return &Video, nil
@@ -57,13 +57,13 @@ func (vs *VideoService) GetByID(id primitive.ObjectID) (*models.Video, error) {
 func (vs *VideoService) Create(model dto.InsertVideo) (*models.Video, error) {
 	convertedVideo := model.ConvertToVideo()
 	if convertedVideo.CategoryID.IsZero() {
-		_ = categoryService.GetFreeCategory()
+		_ = vs.categoryService.GetFreeCategory()
 	}
 
-	if _, err := categoryService.GetById(convertedVideo.CategoryID); err == mongo.ErrNoDocuments {
+	if _, err := vs.categoryService.GetById(convertedVideo.CategoryID); err == mongo.ErrNoDocuments {
 		return nil, errors.New("Category with id " + convertedVideo.CategoryID.Hex() + " dont exists.")
 	}
-	_, err := videosCollection.InsertOne(context.TODO(), &convertedVideo)
+	_, err := vs.videosCollection.InsertOne(context.TODO(), &convertedVideo)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (vs *VideoService) Create(model dto.InsertVideo) (*models.Video, error) {
 
 func (vs *VideoService) Update(id primitive.ObjectID, newData dto.InsertVideo) (*models.Video, error) {
 	var video *models.Video
-	if err := videosCollection.FindOneAndUpdate(
+	if err := vs.videosCollection.FindOneAndUpdate(
 		context.Background(),
 		bson.D{
 			{"_id", id},
@@ -86,7 +86,7 @@ func (vs *VideoService) Update(id primitive.ObjectID, newData dto.InsertVideo) (
 }
 
 func (vs *VideoService) Delete(id primitive.ObjectID) error {
-	result, err := videosCollection.DeleteOne(context.TODO(), bson.M{"_id": id})
+	result, err := vs.videosCollection.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if result.DeletedCount == 0 {
 		return errors.New("no document deleted")
 	}

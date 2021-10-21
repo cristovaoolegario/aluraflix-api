@@ -24,6 +24,8 @@ jobs:
   generate-tag:
     needs: build-and-test
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.step_tag.outputs.new_tag }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,7 +36,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: 'patch'
-          WITH_V: true
+          WITH_V: true      
+      - name: Get the version of tag
+        id: get_version
+        run: |
+           echo ${{steps.step_tag.outputs.new_tag}}
 
   docker-image:
     needs:
@@ -63,4 +69,4 @@ jobs:
           push: true
           tags: |
               ${{ secrets.DOCKERHUB_USERNAME }}/aluraflix-api:latest, 
-              ${{ secrets.DOCKERHUB_USERNAME }}/aluraflix-api:${{ needs.generate-tag.steps.step_tag.outputs.new_tag }}
+              ${{ secrets.DOCKERHUB_USERNAME }}/aluraflix-api:${{ jobs.generate-tag.outputs.new_tag }}

@@ -12,8 +12,7 @@ This application was developed with:
 - Mongodb
 - Docker-Compose
 
-This project image is being published to
-this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
+This project image is being published to this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
 
 ## Pre-requisites
 

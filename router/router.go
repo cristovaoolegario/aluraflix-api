@@ -11,10 +11,10 @@ import (
 	"strconv"
 )
 
-func ProvideRouter(videoRouter VideoRouter) mux.Router {
+func ProvideRouter(videoRouter VideoRouter, categoryRouter CategoryRouter) mux.Router {
 	r := mux.Router{}
 	addVideosResources(videoRouter, &r, auth.JwtMiddleware)
-	addCategoriesResources(&r, auth.JwtMiddleware)
+	addCategoriesResources(categoryRouter, &r, auth.JwtMiddleware)
 	return r
 }
 
@@ -27,13 +27,13 @@ func addVideosResources(videoRouter VideoRouter, r *mux.Router, middleware *jwtm
 	r.Handle("/api/v1/videos/{id}", middleware.Handler(http.HandlerFunc(videoRouter.DeleteVideoByID))).Methods("DELETE")
 }
 
-func addCategoriesResources(r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
-	r.Handle("/api/v1/categories", middleware.Handler(GetAllCategories)).Methods("GET")
-	r.Handle("/api/v1/categories/{id}", middleware.Handler(GetCategoryByID)).Methods("GET")
-	r.Handle("/api/v1/categories/{id}/videos", middleware.Handler(GetAllVideosByCategoryID)).Methods("GET")
-	r.Handle("/api/v1/categories", middleware.Handler(CreateCategory)).Methods("POST")
-	r.Handle("/api/v1/categories/{id}", middleware.Handler(UpdateCategoryByID)).Methods("PUT")
-	r.Handle("/api/v1/categories/{id}", middleware.Handler(DeleteCategoryByID)).Methods("DELETE")
+func addCategoriesResources(categoryRouter CategoryRouter, r *mux.Router, middleware *jwtmiddleware.JWTMiddleware) {
+	r.Handle("/api/v1/categories", middleware.Handler(http.HandlerFunc(categoryRouter.GetAllCategories))).Methods("GET")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(http.HandlerFunc(categoryRouter.GetCategoryByID))).Methods("GET")
+	r.Handle("/api/v1/categories/{id}/videos", middleware.Handler(http.HandlerFunc(categoryRouter.GetAllVideosByCategoryID))).Methods("GET")
+	r.Handle("/api/v1/categories", middleware.Handler(http.HandlerFunc(categoryRouter.CreateCategory))).Methods("POST")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(http.HandlerFunc(categoryRouter.UpdateCategoryByID))).Methods("PUT")
+	r.Handle("/api/v1/categories/{id}", middleware.Handler(http.HandlerFunc(categoryRouter.DeleteCategoryByID))).Methods("DELETE")
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {

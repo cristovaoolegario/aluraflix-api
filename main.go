@@ -4,7 +4,7 @@ import "os"
 
 func main() {
 
-	a := initApp()
+	a := InitApp()
 
 	a.Run(os.Getenv("PORT"),
 		  os.Getenv("ENV"))

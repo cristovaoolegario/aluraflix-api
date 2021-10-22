@@ -16,7 +16,8 @@ func TestCategoryService(t *testing.T) {
 	defer mt.Close()
 
 	mt.Run("GetAllCategories method Should return object when has objects", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
@@ -27,8 +28,6 @@ func TestCategoryService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstCategory, secondCategory, killCursors)
 
-		var categoryService = CategoryService{}
-
 		response, err := categoryService.GetAll("", 1, 5)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(response))
@@ -36,12 +35,11 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetAllCategories method Should return error when dont has objects", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.GetAll("", 1, 5)
 		assert.NotNil(t, err)
@@ -50,13 +48,12 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetCategoryById method Should return error when object dont exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
 		id := primitive.NewObjectID()
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.GetById(id)
 		assert.NotNil(t, err)
@@ -65,13 +62,13 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetCategoryById method Should return object when object exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
 		id := primitive.NewObjectID()
 		expectedCategory := mocked_data.GetValidCategoryWithId(id)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.GetById(id)
 		assert.Nil(t, err)
@@ -80,14 +77,14 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("CreateCategory method Should return error when object could not be created", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
 			Message: "Con't insert data",
 		}))
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.Create(dto.InsertCategory{})
 		assert.Nil(t, response)
@@ -96,10 +93,10 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("CreateCategory method Should return error when object could not be created", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
-		mt.AddMockResponses(mtest.CreateSuccessResponse())
-
 		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
+		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
 		response, err := categoryService.Create(mocked_data.GetValidInsertCategoryDto())
 
@@ -109,15 +106,15 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("UpdateCategory method Should return error When could not update object", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
 			Message: "Con't update data",
 		}))
 		id := primitive.NewObjectID()
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.Update(id, dto.InsertCategory{})
 
@@ -127,15 +124,15 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("UpdateCategory method Should update fields When object exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
 		id := primitive.NewObjectID()
 		categoryData := mocked_data.GetValidInsertCategoryDto()
 		mt.AddMockResponses(bson.D{
 			{"ok", 1},
 			{"value", mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(id))},
 		})
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.Update(id, categoryData)
 
@@ -145,25 +142,31 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("DeleteCategory method Should delete an item When the item can be deleted", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
 		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
+
 		err := categoryService.Delete(primitive.NewObjectID())
 		assert.Nil(t, err)
 		mt.ClearMockResponses()
 	})
 
 	mt.Run("DeleteCategory method Should return no document deleted error When document dont exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
 		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
+
 		err := categoryService.Delete(primitive.NewObjectID())
 		assert.NotNil(t, err)
 		mt.ClearMockResponses()
 	})
 
 	mt.Run("GetVideosByCategoryId method Should return object when has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+		categoryService.videosCollection = mt.Coll
+
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
@@ -174,8 +177,6 @@ func TestCategoryService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstCategory, secondCategory, killCursors)
 
-		var categoryService = CategoryService{}
-
 		response, err := categoryService.GetVideosByCategoryId(primitive.ObjectID{})
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(response))
@@ -183,12 +184,12 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetVideosByCategoryId method Should return error when dont has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+		categoryService.videosCollection = mt.Coll
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
-
-		var categoryService = CategoryService{}
 
 		response, err := categoryService.GetVideosByCategoryId(primitive.ObjectID{})
 		assert.NotNil(t, err)
@@ -197,13 +198,12 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetFreeCategory method Should return free category object when object already exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
 
 		expectedCategory := mocked_data.GetValidCategory()
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(expectedCategory)))
-
-		var categoryService = CategoryService{}
 
 		response := categoryService.GetFreeCategory()
 		assert.NotNil(t, response)
@@ -211,7 +211,9 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetFreeCategory method Should create free category and return object when object dont exists", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
+
 		expectedFreeCategory := models.GetFreeCategory()
 
 		firstResponse := mtest.CreateWriteErrorsResponse(mtest.WriteError{
@@ -223,7 +225,6 @@ func TestCategoryService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstResponse, secondResponse, killCursors)
 
-		var categoryService = CategoryService{}
 		response := categoryService.GetFreeCategory()
 
 		assert.NotNil(t, response)
@@ -232,7 +233,8 @@ func TestCategoryService(t *testing.T) {
 	})
 
 	mt.Run("GetFreeCategory method Should return nil when free category dont exists and cant be created", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var categoryService = CategoryService{}
+		categoryService.categoryCollection = mt.Coll
 
 		firstResponse := mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
@@ -247,7 +249,6 @@ func TestCategoryService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstResponse, secondResponse, killCursors)
 
-		var categoryService = CategoryService{}
 
 		response := categoryService.GetFreeCategory()
 		assert.Nil(t, response)

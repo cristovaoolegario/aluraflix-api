@@ -11,15 +11,18 @@ import (
 	"net/http"
 )
 
-var categoryService interfaces.ICategoryService
 
-func init() {
-	categoryService = &db.CategoryService{}
+type CategoryRouter struct {
+	service interfaces.ICategoryService
 }
 
-var GetAllCategories = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func ProvideCategoryRouter(s db.CategoryService) CategoryRouter {
+	return CategoryRouter{&s}
+}
+
+func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := getQueryParams(r.URL.Query())
-	categories, err := categoryService.GetAll(filter, page, pageSize)
+	categories, err := cs.service.GetAll(filter, page, pageSize)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -29,20 +32,20 @@ var GetAllCategories = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	respondWithJson(w, http.StatusOK, categories)
-})
+}
 
-var GetCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cs *CategoryRouter) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
-	category, err := categoryService.GetById(id)
+	category, err := cs.service.GetById(id)
 	if err != nil {
 		respondWithJson(w, http.StatusNotFound, nil)
 		return
 	}
 	respondWithJson(w, http.StatusOK, category)
-})
+}
 
-var CreateCategory = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cs *CategoryRouter) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var category dto.InsertCategory
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -54,15 +57,15 @@ var CreateCategory = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	insertedVideo, err := categoryService.Create(category)
+	insertedVideo, err := cs.service.Create(category)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusCreated, insertedVideo)
-})
+}
 
-var UpdateCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cs *CategoryRouter) UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var category dto.InsertCategory
@@ -76,29 +79,29 @@ var UpdateCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
 		return
 	}
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	updatedCategory, err := categoryService.Update(id, category)
+	updatedCategory, err := cs.service.Update(id, category)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusOK, updatedCategory)
-})
+}
 
-var DeleteCategoryByID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cs *CategoryRouter) DeleteCategoryByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	if err := categoryService.Delete(id); err != nil {
+	if err := cs.service.Delete(id); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondWithJson(w, http.StatusNoContent, nil)
-})
+}
 
-var GetAllVideosByCategoryID = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cs *CategoryRouter) GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
-	videos, err := categoryService.GetVideosByCategoryId(id)
+	videos, err := cs.service.GetVideosByCategoryId(id)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -108,4 +111,4 @@ var GetAllVideosByCategoryID = http.HandlerFunc(func(w http.ResponseWriter, r *h
 		return
 	}
 	respondWithJson(w, http.StatusOK, videos)
-})
+}

@@ -18,7 +18,9 @@ func TestVideoService(t *testing.T) {
 	defer mt.Close()
 
 	mt.Run("GetAllFreeVideos method Should return object when has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
@@ -29,12 +31,10 @@ func TestVideoService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
 
-		categoryService = &mocked_services.CategoryServiceMock{}
+		videoService.categoryService = &mocked_services.CategoryServiceMock{}
 		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
 			return models.GetFreeCategory()
 		}
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetAllFreeVideos()
 		assert.Nil(t, err)
@@ -43,17 +43,17 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetAllFreeVideos method Should return error when dont has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
 
-		categoryService = &mocked_services.CategoryServiceMock{}
+		videoService.categoryService = &mocked_services.CategoryServiceMock{}
 		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
 			return models.GetFreeCategory()
 		}
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetAllFreeVideos()
 		assert.NotNil(t, err)
@@ -62,7 +62,9 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetAllVideos method Should return object when has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
+
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
@@ -72,8 +74,6 @@ func TestVideoService(t *testing.T) {
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetAll("", 1, 5)
 		assert.Nil(t, err)
@@ -82,7 +82,9 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetAllVideos method with filter Should return object when has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
+
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
@@ -93,8 +95,6 @@ func TestVideoService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstVideo, secondVideo, killCursors)
 
-		var videoService = VideoService{}
-
 		videoResponse, err := videoService.GetAll("test", 1, 5)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(videoResponse))
@@ -102,12 +102,11 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetAllVideos method Should return error when dont has objects", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetAll("", 1, 5)
 		assert.NotNil(t, err)
@@ -116,13 +115,13 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetVideoByID method Should return object when object with id exists", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
+
 		id := primitive.NewObjectID()
 		expectedVideo := mocked_data.GetValidVideoWithId(id)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(expectedVideo)))
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetByID(expectedVideo.ID)
 		assert.Nil(t, err)
@@ -131,12 +130,11 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("GetVideoByID method Should return error when object dont exists", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		id := primitive.NewObjectID()
 
 		mt.AddMockResponses(mtest.CreateCommandErrorResponse(mtest.CommandError{}))
-
-		var videoService = VideoService{}
 
 		videoResponse, err := videoService.GetByID(id)
 		assert.NotNil(t, err)
@@ -145,7 +143,8 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return object when inserted", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		id := primitive.NewObjectID()
 		expectedCategory := mocked_data.GetValidCategoryWithId(id)
 
@@ -153,7 +152,7 @@ func TestVideoService(t *testing.T) {
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstResponse, killCursors)
 
-		categoryService = &mocked_services.CategoryServiceMock{}
+		videoService.categoryService = &mocked_services.CategoryServiceMock{}
 		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
 			return nil
 		}
@@ -161,7 +160,6 @@ func TestVideoService(t *testing.T) {
 			return expectedCategory, nil
 		}
 
-		var videoService = VideoService{}
 		insertedVideo, err := videoService.Create(mocked_data.GetValidInsertVideoDto())
 
 		assert.NotNil(t, insertedVideo)
@@ -170,24 +168,22 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return error when could not insert", func(mt *mtest.T) {
-		categoriesCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 
-		videosCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
 			Message: "Con't insert data",
 		}))
 
-		categoryService = &mocked_services.CategoryServiceMock{}
+		videoService.categoryService = &mocked_services.CategoryServiceMock{}
 		mocked_services.CategoryServiceMockGetFreeCategory = func() *models.Category {
 			return nil
 		}
 		mocked_services.CategoryServiceMockGetByID = func(id primitive.ObjectID) (*models.Category, error) {
 			return mocked_data.GetValidCategory(), nil
 		}
-
-		var videoService = VideoService{}
 
 		insertedVideo, err := videoService.Create(dto.InsertVideo{})
 		assert.Nil(t, insertedVideo)
@@ -196,16 +192,15 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("CreateVideo method Should return error when category dont exist", func(mt *mtest.T) {
-
-		categoriesCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(bson.D{}, killCursors)
 
-		categoryService = &mocked_services.CategoryServiceMock{}
+		videoService.categoryService = &mocked_services.CategoryServiceMock{}
 		mocked_services.CategoryServiceMockGetByID = func(id primitive.ObjectID) (*models.Category, error) {
 			return nil, mongo.ErrNoDocuments
 		}
-		var videoService = VideoService{}
 
 		insertedVideo, err := videoService.Create(dto.InsertVideo{})
 		assert.Nil(t, insertedVideo)
@@ -214,7 +209,8 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("UpdateVideo method Should update fields When object exists", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		id := primitive.NewObjectID()
 		videoData := mocked_data.GetValidInsertVideoDto()
 		mt.AddMockResponses(bson.D{
@@ -222,7 +218,6 @@ func TestVideoService(t *testing.T) {
 			{"value", mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(id))},
 		})
 
-		var videoService = VideoService{}
 		_, err := videoService.Update(id, videoData)
 
 		assert.Nil(t, err)
@@ -230,7 +225,8 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("UpdateVideo method Should return error When could not update object", func(mt *mtest.T) {
-		videosCollection = mt.Coll
+		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
@@ -238,7 +234,6 @@ func TestVideoService(t *testing.T) {
 		}))
 		id := primitive.NewObjectID()
 
-		var videoService = VideoService{}
 
 		updateVideo, err := videoService.Update(id, dto.InsertVideo{})
 		assert.Nil(t, updateVideo)
@@ -247,18 +242,18 @@ func TestVideoService(t *testing.T) {
 	})
 
 	mt.Run("DeleteVideo method Should delete an item When the item can be deleted", func(mt *mtest.T) {
-		videosCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
 		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
 		err := videoService.Delete(primitive.NewObjectID())
 		assert.Nil(t, err)
 		mt.ClearMockResponses()
 	})
 
 	mt.Run("DeleteVideo method Should return no document deleted error When document dont exists", func(mt *mtest.T) {
-		videosCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
 		var videoService = VideoService{}
+		videoService.videosCollection = mt.Coll
+		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
 		err := videoService.Delete(primitive.NewObjectID())
 		assert.NotNil(t, err)
 		mt.ClearMockResponses()

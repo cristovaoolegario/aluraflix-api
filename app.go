@@ -20,13 +20,14 @@ func ProvideApp(router mux.Router, db db.DatabaseService) App {
 
 func (a *App) Run(port, env string) {
 	fmt.Println("Server running in port:", port)
+	stringedPort := fmt.Sprintf(":%s", port)
 	if env == "dev" {
 		corsWrapper := cors.New(cors.Options{
 			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 			AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*"},
 		})
-		log.Fatal(http.ListenAndServe(port, corsWrapper.Handler(a.router)))
+		log.Fatal(http.ListenAndServe(stringedPort, corsWrapper.Handler(a.router)))
 	} else {
-		log.Fatal(http.ListenAndServe(port, a.router))
+		log.Fatal(http.ListenAndServe(stringedPort, a.router))
 	}
 }

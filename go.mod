@@ -9,6 +9,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jarcoal/httpmock v1.0.8
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/rs/cors v1.8.0
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.7.3

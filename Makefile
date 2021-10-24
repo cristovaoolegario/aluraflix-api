@@ -3,7 +3,7 @@ pre-requisites:
 	go get
 	npm install -g newman
 run:
-	go run main.go app.go
+	go run main.go wire_gen.go app.go
 test:
 	go test -v ./... -cover
 integration-test:

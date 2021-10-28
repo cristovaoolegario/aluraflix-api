@@ -37,6 +37,23 @@ To run all the tests (unit and integration test) in this repo you can use:
 
 ## Run instructions:
 
+### Locally
+
+To run it locally, you will need to set up a .env file like below:
+- ```
+  PORT=
+  ENV=
+  AUD=
+  ISS=
+  APP_DB_USERNAME=
+  APP_DB_PASSWORD=
+  APP_DB_HOST=
+  APP_DB_NAME= 
+  ```
+- Then run ```go run ./cmd/aluraflix-api/main.go```
+
+### Docker container
+
 ``` docker-compose up -d ```
 
 ## Import Postman Collection (API's)

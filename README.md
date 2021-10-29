@@ -1,9 +1,7 @@
 # Aluraflix API
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cristovaoolegario/aluraflix-api/CI)
-<a href='https://github.com/jpoles1/gopherbadger' target='_blank'>
-![gopherbadger-tag-do-not-edit](https://img.shields.io/badge/Go%20Coverage-91%25-brightgreen.svg?longCache=true&style=flat)
-</a>
+![Codecov](https://img.shields.io/codecov/c/gh/cristovaoolegario/aluraflix-api)
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cristovaoolegario/aluraflix-api)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cristovaoolegario/aluraflix-api)

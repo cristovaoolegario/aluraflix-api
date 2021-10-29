@@ -1,5 +1,13 @@
 # Aluraflix API
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cristovaoolegario/aluraflix-api/CI)
+<a href='https://github.com/jpoles1/gopherbadger' target='_blank'>
+![gopherbadger-tag-do-not-edit](https://img.shields.io/badge/Go%20Coverage-91%25-brightgreen.svg?longCache=true&style=flat)
+</a>
+
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cristovaoolegario/aluraflix-api)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cristovaoolegario/aluraflix-api)
+
 ![Badge AluraFlix reduzido - Sharer](https://user-images.githubusercontent.com/79534537/130669222-e3e649dd-565b-4bb3-85a7-54bdc4f02dcb.png)
 
 ## About the project
@@ -19,27 +27,28 @@ This project image is being published to this [Docker hub repository](https://hu
 You need to have [Go](https://golang.org/dl/), [Docker](https://www.docker.com/products/docker-desktop)
 and [NPM](https://www.npmjs.com/) (for integration tests on command line) installed on your machine.
 
-```make pre-requisites```
+`make pre-requisites`
 
 ## Running tests
 
 To run unit tests you can use:
 
-```make test```
+`make test`
 
 To run integration tests you can use:
 
-```make integration-test```
+`make integration-test`
 
 To run all the tests (unit and integration test) in this repo you can use:
 
-```make all-tests```
+`make all-tests`
 
 ## Run instructions:
 
 ### Locally
 
 To run it locally, you will need to set up a .env file like below:
+
 - ```
   PORT=
   ENV=
@@ -48,13 +57,13 @@ To run it locally, you will need to set up a .env file like below:
   APP_DB_USERNAME=
   APP_DB_PASSWORD=
   APP_DB_HOST=
-  APP_DB_NAME= 
+  APP_DB_NAME=
   ```
-- Then run ```go run ./cmd/aluraflix-api/main.go```
+- Then run `go run ./cmd/aluraflix-api/main.go`
 
 ### Docker container
 
-``` docker-compose up -d ```
+`docker-compose up -d`
 
 ## Import Postman Collection (API's)
 
@@ -66,22 +75,21 @@ to : [Aluraflix.postman_collection.json](https://raw.githubusercontent.com/crist
 Includes the following:
 
 - Auth
-    - Credentials
-    - Testing all endpoints with invalid token
+  - Credentials
+  - Testing all endpoints with invalid token
 - Categories
-    - Create Category
-    - Get Categories with filters
-    - Get Category By Id
-    - Update Category
-    - Delete Category
+  - Create Category
+  - Get Categories with filters
+  - Get Category By Id
+  - Update Category
+  - Delete Category
 - Videos
-    - Create Video
-    - Get Videos with filters
-    - Get Video By Id
-    - Update Video
-    - Delete Video
+  - Create Video
+  - Get Videos with filters
+  - Get Video By Id
+  - Update Video
+  - Delete Video
 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-

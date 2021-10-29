@@ -20,7 +20,8 @@ This application was developed with:
 - Mongodb
 - Docker-Compose
 
-This project image is being published to this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
+This project image is being published to
+this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
 
 ## Pre-requisites
 
@@ -75,20 +76,20 @@ to : [Aluraflix.postman_collection.json](https://raw.githubusercontent.com/crist
 Includes the following:
 
 - Auth
-  - Credentials
-  - Testing all endpoints with invalid token
+    - Credentials
+    - Testing all endpoints with invalid token
 - Categories
-  - Create Category
-  - Get Categories with filters
-  - Get Category By Id
-  - Update Category
-  - Delete Category
+    - Create Category
+    - Get Categories with filters
+    - Get Category By Id
+    - Update Category
+    - Delete Category
 - Videos
-  - Create Video
-  - Get Videos with filters
-  - Get Video By Id
-  - Update Video
-  - Delete Video
+    - Create Video
+    - Get Videos with filters
+    - Get Video By Id
+    - Update Video
+    - Delete Video
 
 ## License
 

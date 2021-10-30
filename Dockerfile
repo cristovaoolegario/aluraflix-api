@@ -28,7 +28,8 @@ COPY . .
 # It is also a common best practise.
 
 # Build the application.
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/main .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/main ./cmd/aluraflix-api
+
 # Finally our multi-stage to build a small image
 # Start a new stage from scratch
 FROM scratch

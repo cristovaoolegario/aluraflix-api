@@ -1,5 +1,11 @@
 # Aluraflix API
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cristovaoolegario/aluraflix-api/CI)
+![Codecov](https://img.shields.io/codecov/c/gh/cristovaoolegario/aluraflix-api)
+
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cristovaoolegario/aluraflix-api)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cristovaoolegario/aluraflix-api)
+
 ![Badge AluraFlix reduzido - Sharer](https://user-images.githubusercontent.com/79534537/130669222-e3e649dd-565b-4bb3-85a7-54bdc4f02dcb.png)
 
 ## About the project
@@ -12,32 +18,51 @@ This application was developed with:
 - Mongodb
 - Docker-Compose
 
-This project image is being published to this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
+This project image is being published to
+this [Docker hub repository](https://hub.docker.com/repository/docker/cristovaoolegario/aluraflix-api).
 
 ## Pre-requisites
 
 You need to have [Go](https://golang.org/dl/), [Docker](https://www.docker.com/products/docker-desktop)
 and [NPM](https://www.npmjs.com/) (for integration tests on command line) installed on your machine.
 
-```make pre-requisites```
+`make pre-requisites`
 
 ## Running tests
 
 To run unit tests you can use:
 
-```make test```
+`make test`
 
 To run integration tests you can use:
 
-```make integration-test```
+`make integration-test`
 
 To run all the tests (unit and integration test) in this repo you can use:
 
-```make all-tests```
+`make all-tests`
 
 ## Run instructions:
 
-``` docker-compose up -d ```
+### Locally
+
+To run it locally, you will need to set up a .env file like below:
+
+- ```
+  PORT=
+  ENV=
+  AUD=
+  ISS=
+  APP_DB_USERNAME=
+  APP_DB_PASSWORD=
+  APP_DB_HOST=
+  APP_DB_NAME=
+  ```
+- Then run `go run ./cmd/aluraflix-api/main.go`
+
+### Docker container
+
+`docker-compose up -d`
 
 ## Import Postman Collection (API's)
 
@@ -67,4 +92,3 @@ Includes the following:
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-

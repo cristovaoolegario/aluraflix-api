@@ -106,5 +106,6 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
+          workdir: ./cmd/aluraflix-api
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

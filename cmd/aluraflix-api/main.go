@@ -7,8 +7,7 @@
 // @license.name MIT
 // @license.url https://spdx.org/licenses/MIT.html
 
-// @host localhost:3000
-//cristovao-aluraflix-api.herokuapp.com
+// @host cristovao-aluraflix-api.herokuapp.com
 // @Schemes https http
 // @BasePath /api/v1
 

@@ -1,0 +1,547 @@
+basePath: /api/v1
+definitions:
+  dto.InsertCategory:
+    properties:
+      cor:
+        example: blue
+        type: string
+      titulo:
+        example: Example video
+        type: string
+    type: object
+  dto.InsertVideo:
+    properties:
+      categoriaID:
+        example: "000000000000000000000000"
+        type: string
+      descricao:
+        example: Example description
+        type: string
+      titulo:
+        example: Example video
+        type: string
+      url:
+        example: https://www.example-url.com
+        type: string
+    type: object
+  models.Category:
+    properties:
+      active:
+        example: true
+        type: boolean
+      cor:
+        example: Red
+        type: string
+      id:
+        example: "000000000000000000000000"
+        type: string
+      titulo:
+        example: Example category
+        type: string
+    type: object
+  models.Video:
+    properties:
+      active:
+        example: true
+        type: boolean
+      categoriaID:
+        example: "000000000000000000000000"
+        type: string
+      descricao:
+        example: Example description
+        type: string
+      id:
+        example: "000000000000000000000000"
+        type: string
+      titulo:
+        example: Example video
+        type: string
+      url:
+        example: https://www.example-url.com
+        type: string
+    type: object
+  resources.ErrorMessage:
+    properties:
+      error:
+        example: example error
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: cristovaoolegario@gmail.com
+    name: API Support
+  description: This is a sample service for managing videos and categories
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT.html
+  title: Aluraflix API
+  version: "1.0"
+paths:
+  /categories:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a category by ID
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      description: Get details of all categories
+      parameters:
+      - description: Search by name
+        in: query
+        name: search
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Get details of all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new Category
+      parameters:
+      - description: New category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InsertCategory'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Category
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update a category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New category values
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InsertCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a category by ID
+      tags:
+      - categories
+  /categories/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Get details of a category by ID
+      tags:
+      - categories
+  /categories/{id}/videos:
+    get:
+      consumes:
+      - application/json
+      description: Get all videos by category ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all videos by category ID
+      tags:
+      - videos
+  /videos:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a video by ID
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a video by ID
+      tags:
+      - videos
+    get:
+      consumes:
+      - application/json
+      description: Get details of all videos
+      parameters:
+      - description: Search by name
+        in: query
+        name: search
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Get details of all videos
+      tags:
+      - videos
+    post:
+      consumes:
+      - application/json
+      description: Create a new Video
+      parameters:
+      - description: New video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InsertVideo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Video
+      tags:
+      - videos
+    put:
+      consumes:
+      - application/json
+      description: Update a video by ID
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New video values
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InsertVideo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a video by ID
+      tags:
+      - videos
+  /videos/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a video by ID
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: Get details of a video by ID
+      tags:
+      - videos
+  /videos/free:
+    get:
+      consumes:
+      - application/json
+      description: Get all free videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/resources.ErrorMessage'
+      summary: Get all free videos
+      tags:
+      - videos
+schemes:
+- https
+- http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

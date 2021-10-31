@@ -7,11 +7,12 @@ import (
 	"net/url"
 )
 
+// InsertVideo represents the DTO of a new or an updating video
 type InsertVideo struct {
-	Titulo     string             `bson:"titulo" json:"titulo"`
-	Descricao  string             `bson:"descricao" json:"descricao"`
-	Url        string             `bson:"url" json:"url"`
-	CategoryID primitive.ObjectID `bson:"category_id" json:"categoriaID"`
+	Titulo     string             `json:"titulo" example:"Example video"`
+	Descricao  string             `json:"descricao" example:"Example description"`
+	Url        string             `json:"url" example:"https://www.example-url.com"`
+	CategoryID primitive.ObjectID `json:"categoriaID" example:"000000000000000000000000"`
 }
 
 func (video *InsertVideo) ConvertToVideo() models.Video {

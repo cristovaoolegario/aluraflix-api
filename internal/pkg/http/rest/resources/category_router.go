@@ -20,6 +20,14 @@ func ProvideCategoryRouter(s services.CategoryService) CategoryRouter {
 	return CategoryRouter{&s}
 }
 
+// GetAllCategories godoc
+// @Summary Get details of all categories
+// @Description Get details of all categories
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Category
+// @Router /categories [get]
 func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := GetQueryParams(r.URL.Query())
 	categories, err := cs.service.GetAll(filter, page, pageSize)
@@ -28,7 +36,7 @@ func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	if categories == nil {
-		RespondWithJson(w, http.StatusNotFound, []models.Video{})
+		RespondWithJson(w, http.StatusNotFound, []models.Category{})
 		return
 	}
 	RespondWithJson(w, http.StatusOK, categories)

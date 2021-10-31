@@ -1,0 +1,70 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample service for managing videos and categories",
+        "title": "Aluraflix API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "cristovaoolegario@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://spdx.org/licenses/MIT.html"
+        },
+        "version": "1.0"
+    },
+    "host": "https://cristovao-aluraflix-api.herokuapp.com",
+    "basePath": "/api/v1",
+    "paths": {
+        "/categories": {
+            "get": {
+                "description": "Get details of all categories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "categories"
+                ],
+                "summary": "Get details of all categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Category"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Category": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "cor": {
+                    "type": "string",
+                    "example": "Red"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "000000000000000000000000"
+                },
+                "titulo": {
+                    "type": "string",
+                    "example": "Example category"
+                }
+            }
+        }
+    }
+}

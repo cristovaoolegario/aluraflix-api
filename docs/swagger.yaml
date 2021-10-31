@@ -1,0 +1,48 @@
+basePath: /api/v1
+definitions:
+  models.Category:
+    properties:
+      active:
+        example: true
+        type: boolean
+      cor:
+        example: Red
+        type: string
+      id:
+        example: "000000000000000000000000"
+        type: string
+      titulo:
+        example: Example category
+        type: string
+    type: object
+host: https://cristovao-aluraflix-api.herokuapp.com
+info:
+  contact:
+    email: cristovaoolegario@gmail.com
+    name: API Support
+  description: This is a sample service for managing videos and categories
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT.html
+  termsOfService: http://swagger.io/terms/
+  title: Aluraflix API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+      summary: Get details of all categories
+      tags:
+      - categories
+swagger: "2.0"

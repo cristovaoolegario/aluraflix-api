@@ -154,7 +154,7 @@ func (cs *CategoryRouter) UpdateCategoryByID(w http.ResponseWriter, r *http.Requ
 // @Produce  json
 // @Param id path int true "Category ID"
 // @Security ApiKeyAuth
-// @Success 200 {object} models.Category
+// @Success 200
 // @Failure 400 {object} ErrorMessage
 // @Failure 401 {string} string
 // @Failure 404

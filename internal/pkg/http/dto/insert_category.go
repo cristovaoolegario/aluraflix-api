@@ -5,9 +5,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// InsertCategory represents the DTO of a new or an updating category
 type InsertCategory struct {
-	Titulo string `bson:"titulo" json:"titulo"`
-	Cor    string `bson:"cor" json:"cor"`
+	Titulo string `json:"titulo" example:"Example video"`
+	Cor    string `json:"cor" example:"blue"`
 }
 
 func (category *InsertCategory) ConvertToCategory() models.Category {

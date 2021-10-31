@@ -26,7 +26,15 @@ func ProvideCategoryRouter(s services.CategoryService) CategoryRouter {
 // @Tags categories
 // @Accept  json
 // @Produce  json
+// @Param search query string false "Search by name"
+// @Param page query int false "Page number"
+// @Param pageSize query int false "Page size"
+// @Security ApiKeyAuth
 // @Success 200 {array} models.Category
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string
+// @Failure 404
+// @Failure 500 {object} ErrorMessage
 // @Router /categories [get]
 func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Request) {
 	filter, page, pageSize := GetQueryParams(r.URL.Query())
@@ -42,6 +50,20 @@ func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Reques
 	RespondWithJson(w, http.StatusOK, categories)
 }
 
+// GetCategoryByID godoc
+// @Summary Get details of a category by ID
+// @Description Get details of a category by ID
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Security ApiKeyAuth
+// @Success 200 {object} models.Category
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string 
+// @Failure 404
+// @Failure 500 {object} ErrorMessage
+// @Router /categories/{id} [get]
 func (cs *CategoryRouter) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
@@ -53,6 +75,19 @@ func (cs *CategoryRouter) GetCategoryByID(w http.ResponseWriter, r *http.Request
 	RespondWithJson(w, http.StatusOK, category)
 }
 
+// CreateCategory godoc
+// @Summary Create a new Category
+// @Description Create a new Category
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Param category body dto.InsertCategory true "New category"
+// @Security ApiKeyAuth
+// @Success 201 {object} models.Category
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string 
+// @Failure 500 {object} ErrorMessage
+// @Router /categories [post]
 func (cs *CategoryRouter) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var category dto.InsertCategory
@@ -73,6 +108,21 @@ func (cs *CategoryRouter) CreateCategory(w http.ResponseWriter, r *http.Request)
 	RespondWithJson(w, http.StatusCreated, insertedVideo)
 }
 
+// UpdateCategoryByID godoc
+// @Summary Update a category by ID
+// @Description Update a category by ID
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Param category body dto.InsertCategory true "New category values"
+// @Security ApiKeyAuth
+// @Success 200 {object} models.Category
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string
+// @Failure 404
+// @Failure 500 {object} ErrorMessage
+// @Router /categories [put]
 func (cs *CategoryRouter) UpdateCategoryByID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
@@ -96,6 +146,20 @@ func (cs *CategoryRouter) UpdateCategoryByID(w http.ResponseWriter, r *http.Requ
 	RespondWithJson(w, http.StatusOK, updatedCategory)
 }
 
+// DeleteCategoryByID godoc
+// @Summary Delete a category by ID
+// @Description Delete a category by ID
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Security ApiKeyAuth
+// @Success 200 {object} models.Category
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string
+// @Failure 404
+// @Failure 500 {object} ErrorMessage
+// @Router /categories [delete]
 func (cs *CategoryRouter) DeleteCategoryByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
@@ -106,6 +170,20 @@ func (cs *CategoryRouter) DeleteCategoryByID(w http.ResponseWriter, r *http.Requ
 	RespondWithJson(w, http.StatusNoContent, nil)
 }
 
+// GetAllVideosByCategoryID godoc
+// @Summary Get all videos by category ID
+// @Description Get all videos by category ID
+// @Tags videos
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Security ApiKeyAuth
+// @Success 200 {array} models.Video
+// @Failure 400 {object} ErrorMessage
+// @Failure 401 {string} string
+// @Failure 404
+// @Failure 500 {object} ErrorMessage
+// @Router /categories/{id}/videos [get]
 func (cs *CategoryRouter) GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])

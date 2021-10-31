@@ -7,6 +7,11 @@ import (
 	"strconv"
 )
 
+// ErrorMessage represents a error model
+type ErrorMessage struct {
+	Error string `json:"error" example:"example error"`
+}
+
 func RespondWithError(w http.ResponseWriter, code int, msg string) {
 	RespondWithJson(w, code, map[string]string{"error": msg})
 }

@@ -15,7 +15,6 @@ import (
 	"testing"
 )
 
-
 func TestGetAllFreeVideos_ShouldReturnFreeVideosArrayAndOKStatusResponse_WhenTheresItemsToShow(t *testing.T) {
 	var router = VideoRouter{}
 
@@ -296,7 +295,7 @@ func TestDeleteVideo_ShouldReturnAnErrorAndInternalServerErrorStatusResponse_Whe
 	var router = VideoRouter{}
 	router.service = &mocked_services.VideoServiceMock{}
 
-	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)
+	r, _ := http.NewRequest("DELETE", "/api/v1/videos/"+primitive.NewObjectID().Hex(), nil)
 	w := httptest.NewRecorder()
 
 	mocked_services.VideoServiceMockDelete = func(id primitive.ObjectID) error {
@@ -313,7 +312,7 @@ func TestDeleteVideo_ShouldReturnNoContentResponse_WhenTheItemCouldBeDeleted(t *
 	var router = VideoRouter{}
 	router.service = &mocked_services.VideoServiceMock{}
 
-	r, _ := http.NewRequest("DELETE", "/api/v1/videos/" + primitive.NewObjectID().Hex(), nil)
+	r, _ := http.NewRequest("DELETE", "/api/v1/videos/"+primitive.NewObjectID().Hex(), nil)
 	w := httptest.NewRecorder()
 
 	mocked_services.VideoServiceMockDelete = func(id primitive.ObjectID) error {

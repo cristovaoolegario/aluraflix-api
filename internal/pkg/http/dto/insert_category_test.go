@@ -22,7 +22,7 @@ func TestInsertCategory_ConvertToCategory(t *testing.T) {
 func TestInsertVideo_Validate_ShouldReturnError_WhenTituloIsEmpty(t *testing.T) {
 	ic := InsertCategory{
 		Titulo: "",
-		Cor: "Red",
+		Cor:    "Red",
 	}
 	err := ic.Validate()
 
@@ -32,7 +32,7 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTituloIsEmpty(t *testing.T) 
 func TestInsertVideo_Validate_ShouldReturnError_WhenCorIsEmpty(t *testing.T) {
 	ic := InsertCategory{
 		Titulo: "Unit Test Title",
-		Cor: "",
+		Cor:    "",
 	}
 	err := ic.Validate()
 
@@ -42,11 +42,9 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenCorIsEmpty(t *testing.T) {
 func TestInsertVideo_Validate_ShouldNotReturnError_WhenInsertCategoryIsValid(t *testing.T) {
 	ic := InsertCategory{
 		Titulo: "Unit Test Title",
-		Cor: "Red",
+		Cor:    "Red",
 	}
 	err := ic.Validate()
 
 	assert.Nil(t, err)
 }
-
-

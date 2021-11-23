@@ -2,6 +2,7 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cristovaoolegario/aluraflix-api/CI)
 ![Codecov](https://img.shields.io/codecov/c/gh/cristovaoolegario/aluraflix-api)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cristovaoolegario/aluraflix-api)](https://goreportcard.com/report/github.com/cristovaoolegario/aluraflix-api)
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cristovaoolegario/aluraflix-api)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cristovaoolegario/aluraflix-api)
@@ -74,20 +75,20 @@ to : [Aluraflix.postman_collection.json](https://raw.githubusercontent.com/crist
 Includes the following:
 
 - Auth
-    - Credentials
-    - Testing all endpoints with invalid token
+  - Credentials
+  - Testing all endpoints with invalid token
 - Categories
-    - Create Category
-    - Get Categories with filters
-    - Get Category By Id
-    - Update Category
-    - Delete Category
+  - Create Category
+  - Get Categories with filters
+  - Get Category By Id
+  - Update Category
+  - Delete Category
 - Videos
-    - Create Video
-    - Get Videos with filters
-    - Get Video By Id
-    - Update Video
-    - Delete Video
+  - Create Video
+  - Get Videos with filters
+  - Get Video By Id
+  - Update Video
+  - Delete Video
 
 ## License
 

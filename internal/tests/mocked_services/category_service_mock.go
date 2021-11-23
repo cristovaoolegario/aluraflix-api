@@ -17,13 +17,13 @@ var CategoryServiceMockDelete func(id primitive.ObjectID) error
 var CategoryServiceMockGetVideosByCategoryId func(id primitive.ObjectID) ([]models.Video, error)
 var CategoryServiceMockGetFreeCategory func() *models.Category
 
-type CategoryServiceMock struct {}
+type CategoryServiceMock struct{}
 
 func (cs *CategoryServiceMock) GetById(id primitive.ObjectID) (*models.Category, error) {
 	return CategoryServiceMockGetByID(id)
 }
 
-func (cs *CategoryServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Category, error){
+func (cs *CategoryServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Category, error) {
 	return CategoryServiceMockGetAll(filter, page, pageSize)
 }
 

@@ -22,10 +22,10 @@ func GetValidCategoryWithId(id primitive.ObjectID) *models.Category {
 
 func GetBsonFromCategory(model *models.Category) bson.D {
 	return bson.D{
-		{"_id", model.ID},
-		{"titulo", model.Titulo},
-		{"cor", model.Cor},
-		{"active", model.Active},
+		primitive.E{Key: "_id", Value: model.ID},
+		primitive.E{Key: "titulo", Value: model.Titulo},
+		primitive.E{Key: "cor", Value: model.Cor},
+		primitive.E{Key: "active", Value: model.Active},
 	}
 }
 

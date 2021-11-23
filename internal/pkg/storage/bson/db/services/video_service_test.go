@@ -1,6 +1,8 @@
 package services
 
 import (
+	"testing"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
 	"github.com/cristovaoolegario/aluraflix-api/internal/tests/mocked_data"
@@ -10,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
-	"testing"
 )
 
 func TestVideoService(t *testing.T) {
@@ -214,8 +215,8 @@ func TestVideoService(t *testing.T) {
 		id := primitive.NewObjectID()
 		videoData := mocked_data.GetValidInsertVideoDto()
 		mt.AddMockResponses(bson.D{
-			{"ok", 1},
-			{"value", mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(id))},
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "value", Value: mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(id))},
 		})
 
 		_, err := videoService.Update(id, videoData)
@@ -234,7 +235,6 @@ func TestVideoService(t *testing.T) {
 		}))
 		id := primitive.NewObjectID()
 
-
 		updateVideo, err := videoService.Update(id, dto.InsertVideo{})
 		assert.Nil(t, updateVideo)
 		assert.NotNil(t, err)
@@ -244,7 +244,11 @@ func TestVideoService(t *testing.T) {
 	mt.Run("DeleteVideo method Should delete an item When the item can be deleted", func(mt *mtest.T) {
 		var videoService = VideoService{}
 		videoService.videosCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
+		mt.AddMockResponses(bson.D{
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "acknowledged", Value: true},
+			primitive.E{Key: "n", Value: 1},
+		})
 		err := videoService.Delete(primitive.NewObjectID())
 		assert.Nil(t, err)
 		mt.ClearMockResponses()
@@ -253,7 +257,11 @@ func TestVideoService(t *testing.T) {
 	mt.Run("DeleteVideo method Should return no document deleted error When document dont exists", func(mt *mtest.T) {
 		var videoService = VideoService{}
 		videoService.videosCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
+		mt.AddMockResponses(bson.D{
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "acknowledged", Value: true},
+			primitive.E{Key: "n", Value: 0},
+		})
 		err := videoService.Delete(primitive.NewObjectID())
 		assert.NotNil(t, err)
 		mt.ClearMockResponses()

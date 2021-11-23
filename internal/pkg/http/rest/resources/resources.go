@@ -21,7 +21,7 @@ func RespondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	if payload != nil {
 		response, _ := json.Marshal(payload)
-		w.Write(response)
+		_, _ = w.Write(response)
 	}
 }
 

@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/auth0/go-jwt-middleware"
-	"github.com/form3tech-oss/jwt-go"
 	"net/http"
 	"os"
+
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"
+	"github.com/form3tech-oss/jwt-go"
 )
 
 var JwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
@@ -15,27 +16,27 @@ var JwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 	SigningMethod:       jwt.SigningMethodRS256,
 })
 
-func ValidateToken(token *jwt.Token) (interface{}, error){
-		// Verify 'aud' claim
-		audience := os.Getenv("AUD")
-		checkAudience := token.Claims.(jwt.MapClaims).VerifyAudience(audience, false)
-		if !checkAudience {
-			return token, errors.New("Invalid audience.")
-		}
-		// Verify 'issuer' claim
-		issuer := os.Getenv("ISS")
-		checkIssuer := token.Claims.(jwt.MapClaims).VerifyIssuer(issuer, false)
-		if !checkIssuer {
-			return token, errors.New("Invalid issuer.")
-		}
+func ValidateToken(token *jwt.Token) (interface{}, error) {
+	// Verify 'aud' claim
+	audience := os.Getenv("AUD")
+	checkAudience := token.Claims.(jwt.MapClaims).VerifyAudience(audience, false)
+	if !checkAudience {
+		return token, errors.New("Invalid audience.")
+	}
+	// Verify 'issuer' claim
+	issuer := os.Getenv("ISS")
+	checkIssuer := token.Claims.(jwt.MapClaims).VerifyIssuer(issuer, false)
+	if !checkIssuer {
+		return token, errors.New("Invalid issuer.")
+	}
 
-		cert, err := getPemCert(issuer, token)
-		if err != nil {
-			return nil, err
-		}
+	cert, err := getPemCert(issuer, token)
+	if err != nil {
+		return nil, err
+	}
 
-		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
-		return result, nil
+	result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+	return result, nil
 }
 
 func getPemCert(issuer string, token *jwt.Token) (string, error) {
@@ -54,14 +55,14 @@ func getPemCert(issuer string, token *jwt.Token) (string, error) {
 		return cert, err
 	}
 
-	for k, _ := range jwks.Keys {
+	for k := range jwks.Keys {
 		if token.Header["kid"] == jwks.Keys[k].Kid {
 			cert = "-----BEGIN CERTIFICATE-----\n" + jwks.Keys[k].X5c[0] + "\n-----END CERTIFICATE-----"
 		}
 	}
 
 	if cert == "" {
-		err := errors.New("Unable to find appropriate key.")
+		err := errors.New("unable to find appropriate key")
 		return cert, err
 	}
 

@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func TestInsertVideo_ConvertToVideo(t *testing.T){
+func TestInsertVideo_ConvertToVideo(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "Input video test title",
+		Titulo:    "Input video test title",
 		Descricao: "Input video test description",
-		Url: "https://www.url.com",
+		Url:       "https://www.url.com",
 	}
 
 	convertedVideo := videoToInsert.ConvertToVideo()
@@ -22,9 +22,9 @@ func TestInsertVideo_ConvertToVideo(t *testing.T){
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyTitle(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "",
+		Titulo:    "",
 		Descricao: "Input video test description",
-		Url: "https://www.url.com",
+		Url:       "https://www.url.com",
 	}
 
 	err := videoToInsert.Validate()
@@ -35,9 +35,9 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyTitle(t *testin
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyDescription(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "Input Title test",
+		Titulo:    "Input Title test",
 		Descricao: "",
-		Url: "https://www.url.com",
+		Url:       "https://www.url.com",
 	}
 
 	err := videoToInsert.Validate()
@@ -48,9 +48,9 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyDescription(t *
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyUrl(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "Input Title test",
+		Titulo:    "Input Title test",
 		Descricao: "Input video test description",
-		Url: "",
+		Url:       "",
 	}
 
 	err := videoToInsert.Validate()
@@ -61,9 +61,9 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyUrl(t *testing.
 
 func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnInvalidUrl(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "Input Title test",
+		Titulo:    "Input Title test",
 		Descricao: "Input video test description",
-		Url: "https//www.url.com",
+		Url:       "https//www.url.com",
 	}
 
 	err := videoToInsert.Validate()
@@ -74,9 +74,9 @@ func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnInvalidUrl(t *testin
 
 func TestInsertVideo_Validate_ShouldReturnNil_WhenInsertVideoObjectIsValid(t *testing.T) {
 	videoToInsert := InsertVideo{
-		Titulo: "Input Title test",
+		Titulo:    "Input Title test",
 		Descricao: "Input video test description",
-		Url: "https://www.url.com",
+		Url:       "https://www.url.com",
 	}
 
 	err := videoToInsert.Validate()

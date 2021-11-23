@@ -11,3 +11,5 @@ integration-test:
 all-tests:
 	make test
 	make integration-test
+lint:
+	golangci-lint run ./internal/... ./cmd/...

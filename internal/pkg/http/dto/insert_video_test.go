@@ -1,8 +1,9 @@
 package dto
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInsertVideo_ConvertToVideo(t *testing.T) {
@@ -20,66 +21,68 @@ func TestInsertVideo_ConvertToVideo(t *testing.T) {
 	assert.Equal(t, videoToInsert.Url, convertedVideo.Url, "Url must be the same.")
 }
 
-func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyTitle(t *testing.T) {
-	videoToInsert := InsertVideo{
-		Titulo:    "",
-		Descricao: "Input video test description",
-		Url:       "https://www.url.com",
-	}
+func TestInsertVideo_Validate(t *testing.T) {
+	t.Run("Should return error when theres an empty title", func(t *testing.T) {
+		videoToInsert := InsertVideo{
+			Titulo:    "",
+			Descricao: "Input video test description",
+			Url:       "https://www.url.com",
+		}
 
-	err := videoToInsert.Validate()
+		err := videoToInsert.Validate()
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "Titulo is required.", err.Error())
-}
+		assert.NotNil(t, err)
+		assert.Equal(t, "Titulo is required.", err.Error())
+	})
 
-func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyDescription(t *testing.T) {
-	videoToInsert := InsertVideo{
-		Titulo:    "Input Title test",
-		Descricao: "",
-		Url:       "https://www.url.com",
-	}
+	t.Run("Should return error when theres an empty description", func(t *testing.T) {
+		videoToInsert := InsertVideo{
+			Titulo:    "Input Title test",
+			Descricao: "",
+			Url:       "https://www.url.com",
+		}
 
-	err := videoToInsert.Validate()
+		err := videoToInsert.Validate()
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "Descricao is required.", err.Error())
-}
+		assert.NotNil(t, err)
+		assert.Equal(t, "Descricao is required.", err.Error())
+	})
 
-func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnEmptyUrl(t *testing.T) {
-	videoToInsert := InsertVideo{
-		Titulo:    "Input Title test",
-		Descricao: "Input video test description",
-		Url:       "",
-	}
+	t.Run("Should return error when theres an empty url", func(t *testing.T) {
+		videoToInsert := InsertVideo{
+			Titulo:    "Input Title test",
+			Descricao: "Input video test description",
+			Url:       "",
+		}
 
-	err := videoToInsert.Validate()
+		err := videoToInsert.Validate()
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "Url is required.", err.Error())
-}
+		assert.NotNil(t, err)
+		assert.Equal(t, "Url is required.", err.Error())
+	})
 
-func TestInsertVideo_Validate_ShouldReturnError_WhenTheresAnInvalidUrl(t *testing.T) {
-	videoToInsert := InsertVideo{
-		Titulo:    "Input Title test",
-		Descricao: "Input video test description",
-		Url:       "https//www.url.com",
-	}
+	t.Run("Should return error when theres an invalid url", func(t *testing.T) {
+		videoToInsert := InsertVideo{
+			Titulo:    "Input Title test",
+			Descricao: "Input video test description",
+			Url:       "https//www.url.com",
+		}
 
-	err := videoToInsert.Validate()
+		err := videoToInsert.Validate()
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "Url inválida.", err.Error())
-}
+		assert.NotNil(t, err)
+		assert.Equal(t, "Url inválida.", err.Error())
+	})
 
-func TestInsertVideo_Validate_ShouldReturnNil_WhenInsertVideoObjectIsValid(t *testing.T) {
-	videoToInsert := InsertVideo{
-		Titulo:    "Input Title test",
-		Descricao: "Input video test description",
-		Url:       "https://www.url.com",
-	}
+	t.Run("Should return nil when insert video object is valid", func(t *testing.T) {
+		videoToInsert := InsertVideo{
+			Titulo:    "Input Title test",
+			Descricao: "Input video test description",
+			Url:       "https://www.url.com",
+		}
 
-	err := videoToInsert.Validate()
+		err := videoToInsert.Validate()
 
-	assert.Nil(t, err)
+		assert.Nil(t, err)
+	})
 }

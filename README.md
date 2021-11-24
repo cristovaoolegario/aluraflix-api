@@ -43,13 +43,13 @@ To run all the tests (unit and integration test) in this repo you can use:
 
 `make all-tests`
 
-## Run instructions:
+## Run instructions
 
 ### Locally
 
 To run it locally, you will need to set up a .env file like below:
 
-- ```
+- ```shell
   PORT=
   ENV=
   AUD=
@@ -59,6 +59,7 @@ To run it locally, you will need to set up a .env file like below:
   APP_DB_HOST=
   APP_DB_NAME=
   ```
+
 - Then run `go run ./cmd/aluraflix-api/main.go`
 
 ### Docker container

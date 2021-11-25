@@ -26,5 +26,4 @@ func TestDBService_mountServerConnection(t *testing.T) {
 			assert.Equal(t, "mongodb+srv://test_user:test_password@test_hostname/test_db?retryWrites=true&w=majority", connectionString)
 		}
 	})
-
 }

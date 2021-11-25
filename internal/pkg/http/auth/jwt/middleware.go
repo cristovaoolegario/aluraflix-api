@@ -21,13 +21,13 @@ func ValidateToken(token *jwt.Token) (interface{}, error) {
 	audience := os.Getenv("AUD")
 	checkAudience := token.Claims.(jwt.MapClaims).VerifyAudience(audience, false)
 	if !checkAudience {
-		return token, errors.New("Invalid audience.")
+		return token, errors.New("invalid audience")
 	}
 	// Verify 'issuer' claim
 	issuer := os.Getenv("ISS")
 	checkIssuer := token.Claims.(jwt.MapClaims).VerifyIssuer(issuer, false)
 	if !checkIssuer {
-		return token, errors.New("Invalid issuer.")
+		return token, errors.New("invalid issuer")
 	}
 
 	cert, err := getPemCert(issuer, token)

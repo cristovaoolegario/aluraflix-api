@@ -12,8 +12,7 @@ import (
 )
 
 func TestValidateToken(t *testing.T) {
-
-	t.Run("ShouldReturnTokenAndInvalidAudienceError_WhenTokenAudienceIsNotValid", func(t *testing.T) {
+	t.Run("Should return token and invalid audience error when token audience is not valid", func(t *testing.T) {
 		os.Setenv("AUD", "https://unit-test-audience")
 		claims := jwt.MapClaims{
 			"aud": []string{"https://not-unit-test-audience"},
@@ -26,7 +25,7 @@ func TestValidateToken(t *testing.T) {
 		assert.Equal(t, "invalid audience", err.Error())
 	})
 
-	t.Run("ShouldReturnTokenAndInvalidIssuerError_WhenTokenIssuerIsNotValid", func(t *testing.T) {
+	t.Run("Should return token and invalid issuer error when token issuer is not valid", func(t *testing.T) {
 		os.Setenv("AUD", "https://unit-test-audience")
 		os.Setenv("ISS", "https://unit-test-issuer.us.auth0.com")
 		claims := jwt.MapClaims{
@@ -41,7 +40,7 @@ func TestValidateToken(t *testing.T) {
 		assert.Equal(t, "invalid issuer", err.Error())
 	})
 
-	t.Run("ShouldReturnError_WhenTheresAProblemGettingTheCertificate", func(t *testing.T) {
+	t.Run("Should return error when theres a problem getting the certificate", func(t *testing.T) {
 		os.Setenv("AUD", "https://unit-test-audience/")
 		os.Setenv("ISS", "https://unit-test-issuer.us.auth0.com/")
 
@@ -69,7 +68,7 @@ func TestValidateToken(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("ShouldReturnError_WhenTheresAProblemDecodingTheCertificate", func(t *testing.T) {
+	t.Run("Should return error when theres a problem decoding the certificate", func(t *testing.T) {
 		os.Setenv("AUD", "https://unit-test-audience/")
 		os.Setenv("ISS", "https://unit-test-issuer.us.auth0.com/")
 
@@ -95,7 +94,7 @@ func TestValidateToken(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("ShouldReturnError_WhenTheresAProblemWithTheCertificateValidation", func(t *testing.T) {
+	t.Run("Should return error when theres a problem with the certificate validation", func(t *testing.T) {
 		os.Setenv("AUD", "https://unit-test-audience/")
 		os.Setenv("ISS", "https://unit-test-issuer.us.auth0.com/")
 

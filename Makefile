@@ -11,3 +11,9 @@ integration-test:
 all-tests:
 	make test
 	make integration-test
+lint:
+	go fmt ./... 
+	clear
+	go vet ./...
+	clear
+	golangci-lint run ./internal/... ./cmd/... --skip-files wire.go

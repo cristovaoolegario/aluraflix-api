@@ -23,11 +23,11 @@ func GetValidVideoWithId(id primitive.ObjectID) *models.Video {
 
 func GetBsonFromVideo(model *models.Video) bson.D {
 	return bson.D{
-		{"_id", model.ID},
-		{"titulo", model.Titulo},
-		{"descricao", model.Descricao},
-		{"url", model.Url},
-		{"active", model.Active},
+		primitive.E{Key: "_id", Value: model.ID},
+		primitive.E{Key: "titulo", Value: model.Titulo},
+		primitive.E{Key: "descricao", Value: model.Descricao},
+		primitive.E{Key: "url", Value: model.Url},
+		primitive.E{Key: "active", Value: model.Active},
 	}
 }
 

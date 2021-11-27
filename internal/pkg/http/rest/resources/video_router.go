@@ -2,13 +2,14 @@ package resources
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/services"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
 
 type VideoRouter struct {
@@ -90,7 +91,7 @@ func (vr *VideoRouter) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 // @Router /videos/{id} [get]
 func (vr *VideoRouter) GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := primitive.ObjectIDFromHex(params["id"])
+	id, _ := primitive.ObjectIDFromHex(params["id"])
 	video, err := vr.service.GetByID(id)
 	if err != nil {
 		RespondWithJson(w, http.StatusNotFound, nil)

@@ -18,10 +18,10 @@ var VideoServiceMockDelete func(id primitive.ObjectID) error
 
 type VideoServiceMock struct{}
 
-func (vs *VideoServiceMock) GetAllFreeVideos() ([]models.Video, error){
+func (vs *VideoServiceMock) GetAllFreeVideos() ([]models.Video, error) {
 	return VideoServiceMockGetAllFreeVideos()
 }
-func (vs *VideoServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error){
+func (vs *VideoServiceMock) GetAll(filter string, page int64, pageSize int64) ([]models.Video, error) {
 	return VideoServiceMockGetAll(filter, page, pageSize)
 }
 

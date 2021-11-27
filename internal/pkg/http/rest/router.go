@@ -37,6 +37,6 @@ func addCategoriesResources(categoryRouter resources.CategoryRouter, r *mux.Rout
 	r.Handle("/api/v1/categories/{id}", middleware.Handler(http.HandlerFunc(categoryRouter.DeleteCategoryByID))).Methods("DELETE")
 }
 
-func addSwaggerDocumentation(router *mux.Router){
+func addSwaggerDocumentation(router *mux.Router) {
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 }

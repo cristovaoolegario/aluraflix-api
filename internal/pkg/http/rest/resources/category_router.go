@@ -2,15 +2,15 @@ package resources
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/services"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
-
 
 type CategoryRouter struct {
 	service interfaces.ICategoryService
@@ -60,13 +60,13 @@ func (cs *CategoryRouter) GetAllCategories(w http.ResponseWriter, r *http.Reques
 // @Security ApiKeyAuth
 // @Success 200 {object} models.Category
 // @Failure 400 {object} ErrorMessage
-// @Failure 401 {string} string 
+// @Failure 401 {string} string
 // @Failure 404
 // @Failure 500 {object} ErrorMessage
 // @Router /categories/{id} [get]
 func (cs *CategoryRouter) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := primitive.ObjectIDFromHex(params["id"])
+	id, _ := primitive.ObjectIDFromHex(params["id"])
 	category, err := cs.service.GetById(id)
 	if err != nil {
 		RespondWithJson(w, http.StatusNotFound, nil)
@@ -85,7 +85,7 @@ func (cs *CategoryRouter) GetCategoryByID(w http.ResponseWriter, r *http.Request
 // @Security ApiKeyAuth
 // @Success 201 {object} models.Category
 // @Failure 400 {object} ErrorMessage
-// @Failure 401 {string} string 
+// @Failure 401 {string} string
 // @Failure 500 {object} ErrorMessage
 // @Router /categories [post]
 func (cs *CategoryRouter) CreateCategory(w http.ResponseWriter, r *http.Request) {
@@ -186,7 +186,7 @@ func (cs *CategoryRouter) DeleteCategoryByID(w http.ResponseWriter, r *http.Requ
 // @Router /categories/{id}/videos [get]
 func (cs *CategoryRouter) GetAllVideosByCategoryID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := primitive.ObjectIDFromHex(params["id"])
+	id, _ := primitive.ObjectIDFromHex(params["id"])
 	videos, err := cs.service.GetVideosByCategoryId(id)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, err.Error())

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/interfaces"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
@@ -12,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type VideoService struct{
+type VideoService struct {
 	categoryService  interfaces.ICategoryService
 	videosCollection *mongo.Collection
 }
@@ -75,9 +76,9 @@ func (vs *VideoService) Update(id primitive.ObjectID, newData dto.InsertVideo) (
 	if err := vs.videosCollection.FindOneAndUpdate(
 		context.Background(),
 		bson.D{
-			{"_id", id},
+			primitive.E{Key: "_id", Value: id},
 		},
-		bson.D{{"$set", newData}},
+		bson.D{primitive.E{Key: "$set", Value: newData}},
 		options.FindOneAndUpdate().SetReturnDocument(1),
 	).Decode(&video); err != nil {
 		return nil, err

@@ -16,7 +16,7 @@ func initCategoryRouter() resources.CategoryRouter {
 	return resources.CategoryRouter{}
 }
 
-func initRouter() *mux.Router{
+func initRouter() *mux.Router {
 	wire.Build(services.ProvideCategoryService,
 		services.ProvideVideoService,
 		resources.ProvideCategoryRouter,

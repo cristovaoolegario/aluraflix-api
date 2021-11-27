@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -54,9 +55,9 @@ func (cs *CategoryService) Update(id primitive.ObjectID, newData dto.InsertCateg
 	if err := cs.categoryCollection.FindOneAndUpdate(
 		context.Background(),
 		bson.D{
-			{"_id", id},
+			primitive.E{Key: "_id", Value: id},
 		},
-		bson.D{{"$set", newData}},
+		bson.D{primitive.E{Key: "$set", Value: newData}},
 		options.FindOneAndUpdate().SetReturnDocument(1),
 	).Decode(&category); err != nil {
 		return nil, err

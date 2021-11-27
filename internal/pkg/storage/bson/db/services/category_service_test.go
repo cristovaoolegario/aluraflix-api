@@ -1,6 +1,8 @@
 package services
 
 import (
+	"testing"
+
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/http/dto"
 	"github.com/cristovaoolegario/aluraflix-api/internal/pkg/storage/bson/db/models"
 	"github.com/cristovaoolegario/aluraflix-api/internal/tests/mocked_data"
@@ -8,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
-	"testing"
 )
 
 func TestCategoryService(t *testing.T) {
@@ -21,9 +22,9 @@ func TestCategoryService(t *testing.T) {
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
-		firstCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(firstId)))
+		firstCategory := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(firstId)))
 
-		secondCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.NextBatch, mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(secondId)))
+		secondCategory := mtest.CreateCursorResponse(1, "foo.bar", mtest.NextBatch, mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(secondId)))
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstCategory, secondCategory, killCursors)
@@ -130,8 +131,8 @@ func TestCategoryService(t *testing.T) {
 		id := primitive.NewObjectID()
 		categoryData := mocked_data.GetValidInsertCategoryDto()
 		mt.AddMockResponses(bson.D{
-			{"ok", 1},
-			{"value", mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(id))},
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "value", Value: mocked_data.GetBsonFromCategory(mocked_data.GetValidCategoryWithId(id))},
 		})
 
 		response, err := categoryService.Update(id, categoryData)
@@ -144,7 +145,11 @@ func TestCategoryService(t *testing.T) {
 	mt.Run("DeleteCategory method Should delete an item When the item can be deleted", func(mt *mtest.T) {
 		var categoryService = CategoryService{}
 		categoryService.categoryCollection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 1}})
+		mt.AddMockResponses(bson.D{
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "acknowledged", Value: true},
+			primitive.E{Key: "n", Value: 1},
+		})
 
 		err := categoryService.Delete(primitive.NewObjectID())
 		assert.Nil(t, err)
@@ -155,7 +160,11 @@ func TestCategoryService(t *testing.T) {
 		var categoryService = CategoryService{}
 		categoryService.categoryCollection = mt.Coll
 
-		mt.AddMockResponses(bson.D{{"ok", 1}, {"acknowledged", true}, {"n", 0}})
+		mt.AddMockResponses(bson.D{
+			primitive.E{Key: "ok", Value: 1},
+			primitive.E{Key: "acknowledged", Value: true},
+			primitive.E{Key: "n", Value: 0},
+		})
 
 		err := categoryService.Delete(primitive.NewObjectID())
 		assert.NotNil(t, err)
@@ -170,9 +179,9 @@ func TestCategoryService(t *testing.T) {
 		firstId := primitive.NewObjectID()
 		secondId := primitive.NewObjectID()
 
-		firstCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
+		firstCategory := mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(firstId)))
 
-		secondCategory := mtest.CreateCursorResponse(1,"foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
+		secondCategory := mtest.CreateCursorResponse(1, "foo.bar", mtest.NextBatch, mocked_data.GetBsonFromVideo(mocked_data.GetValidVideoWithId(secondId)))
 
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstCategory, secondCategory, killCursors)
@@ -248,7 +257,6 @@ func TestCategoryService(t *testing.T) {
 		})
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(firstResponse, secondResponse, killCursors)
-
 
 		response := categoryService.GetFreeCategory()
 		assert.Nil(t, response)

@@ -45,9 +45,9 @@ jobs:
         id: run-newman
         uses: anthonyvscode/newman-action@v1
         with:
-          color: on
+          color: "on"
           collection: Aluraflix.postman_collection.json
-          reporters: cli          
+          reporters: cli
           
       - name: Output summary to console
         run: echo ${{ steps.run-newman.outputs.summary }}

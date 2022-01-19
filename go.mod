@@ -13,8 +13,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/rs/cors v1.8.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	github.com/swaggo/http-swagger v1.1.2
+	github.com/swaggo/http-swagger v1.2.0
 	github.com/swaggo/swag v1.7.8
 	go.mongodb.org/mongo-driver v1.8.0
 	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect

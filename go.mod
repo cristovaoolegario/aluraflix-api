@@ -12,7 +12,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/rs/cors v1.8.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.4
 	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.7.9
 	go.mongodb.org/mongo-driver v1.8.0

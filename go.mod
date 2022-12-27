@@ -11,7 +11,7 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/joho/godotenv v1.4.0
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/rs/cors v1.8.0
+	github.com/rs/cors v1.8.3
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.7.9
